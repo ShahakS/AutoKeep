@@ -1,6 +1,6 @@
 package Classes;
 
-public class Car {
+public class Vechile {
 	public int carID;
 	private String manufacturer;
 	private int manufactureDate;
@@ -8,7 +8,7 @@ public class Car {
 	private int engineCapacity;
 	private boolean isUsable = true;
 	
-	public Car(String manufacturer,int manufactureDate,int seatsNumber,int engineCapacity,int horsePower){
+	public Vechile(String manufacturer,int manufactureDate,int seatsNumber,int engineCapacity,int horsePower){
 		this.manufacturer = manufacturer;
 		this.manufactureDate = manufactureDate;
 		this.seatsNumber = seatsNumber;
