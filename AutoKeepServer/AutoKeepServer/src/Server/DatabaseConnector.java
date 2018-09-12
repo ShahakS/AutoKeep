@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Queue;
 
+import Classes.Error;
+
 public class DatabaseConnector {
 	private static DatabaseConnector DBConnector = new DatabaseConnector();
 	private final int DATABASE_PORT = 1544;
@@ -58,25 +60,38 @@ public class DatabaseConnector {
 			}
 			statement.execute();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Error error = new Error("Error executing Prepared Statement with query: "+query,e.getMessage());
+			error.writeToErrorLog();
 		}
 	}
 	
-	public synchronized boolean isUserCredentialValid(String userName,String password){
-		boolean isUserCredentialValid = false;
+	public boolean callSpWithSingleValue(String query,Queue parameters){
+		int parameterNum = 1;
+		boolean returnedValue = false;
+		
 		try {
-			CallableStatement statement = DBConnection.prepareCall("{?= call isUserExist(?, ?)}");
-			statement.registerOutParameter(1, java.sql.Types.BOOLEAN);
-			statement.setString(2,userName);
-			statement.setString(3,password);
-			statement.execute();
+			CallableStatement statement = DBConnection.prepareCall(query);
+			statement.registerOutParameter(parameterNum, java.sql.Types.BOOLEAN);
 			
-			isUserCredentialValid = statement.getBoolean(1);			
+			for(parameterNum++;!parameters.isEmpty();parameterNum++)
+			{
+				Object parameter = parameters.poll();
+				if (parameter instanceof String) {
+					statement.setString(parameterNum,(String)parameter);
+				}
+				else if (parameter instanceof Integer) {
+					statement.setInt(parameterNum,((Integer)parameter).intValue());
+				}
+				else if (parameter instanceof Boolean){
+					statement.setBoolean(parameterNum, ((Boolean)parameter).booleanValue());
+				}
+			}
+			statement.execute();
+			returnedValue = statement.getBoolean(1);	
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Error error = new Error("Error Calling Stored Procedure with query: "+query,e.getMessage());
+			error.writeToErrorLog();
 		}
-		return isUserCredentialValid;		
+		return returnedValue;
 	}
 }

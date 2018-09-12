@@ -1,5 +1,5 @@
 package Classes;
-public class UserModel {
+public class UserMODEL {
 	private String userName;
 	private String password;
 	private String dateOfBirth;
@@ -9,7 +9,7 @@ public class UserModel {
 	private String phoneNumber;
 	private boolean isAdmin = false;
 	
-	public UserModel(String userName, String password, String dateOfBirth, String firstName, String lastName,
+	public UserMODEL(String userName, String password, String dateOfBirth, String firstName, String lastName,
 			String emailAddress, String phoneNumber, boolean isAdmin) {
 		super();
 		this.userName = userName;
@@ -24,10 +24,6 @@ public class UserModel {
 
 	public String getUserName() {
 		return userName;
-	}
-
-	public void setUserName(String userName) {
-		this.userName = userName;
 	}
 
 	public String getPassword() {
@@ -80,9 +76,5 @@ public class UserModel {
 
 	public boolean isAdmin() {
 		return isAdmin;
-	}
-
-	public void setAdmin(boolean isAdmin) {
-		this.isAdmin = isAdmin;
 	}
 }
