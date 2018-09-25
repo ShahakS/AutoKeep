@@ -1,6 +1,6 @@
 package Classes;
 
-public class Reservation {
+public class ReservationModel {
 	private int reservationID;
 	private int reservedByUserID;
 	private String reservationDate;
@@ -8,7 +8,7 @@ public class Reservation {
 	private String reservationEnd;
 	private boolean isDelayed;
 
-	public Reservation(int reservationID, int reservedByUserID, String reservationDate, String reservationStart,
+	public ReservationModel(int reservationID, int reservedByUserID, String reservationDate, String reservationStart,
 			String reservationEnd) {
 		super();
 		this.reservationID = reservationID;

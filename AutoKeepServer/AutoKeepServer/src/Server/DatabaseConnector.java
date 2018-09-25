@@ -10,7 +10,7 @@ import Classes.Error;
 
 public class DatabaseConnector {
 	private static DatabaseConnector DBConnector = new DatabaseConnector();
-	private final int DATABASE_PORT = 1544;
+	private final int DATABASE_PORT = 1433;
 	private final String DATABASE_IP = "127.0.0.1";
 	private final String DATABASE_NAME = "AutoKeep";
 	private Connection DBConnection;
@@ -42,30 +42,51 @@ public class DatabaseConnector {
 		return DBConnector;
 	}	
 	
-	public void execute(String query,Queue parameters){
+	/**
+	 * The method execute a query without returned values
+	 * @param query
+	 * @param parameters
+	 * @throws SQLException
+	 */
+	public synchronized void executeQueryWithoutReturnedValue(String query,Queue<Object> parameters) throws SQLException{
+		
 		try {
-			PreparedStatement statement = DBConnection.prepareStatement(query);
-			for(int parameterNum = 1;!parameters.isEmpty();parameterNum++)
-			{
-				Object parameter = parameters.poll();
-				if (parameter instanceof String) {
-					statement.setString(parameterNum,(String)parameter);
-				}
-				else if (parameter instanceof Integer) {
-					statement.setInt(parameterNum,((Integer)parameter).intValue());
-				}
-				else if (parameter instanceof Boolean){
-					statement.setBoolean(parameterNum, ((Boolean)parameter).booleanValue());
-				}
-			}
+			PreparedStatement statement = createPreparedStatement(query, parameters);
 			statement.execute();
 		} catch (SQLException e) {
-			Error error = new Error("Error executing Prepared Statement with query: "+query,e.getMessage());
+			Error error = new Error("Error occurred at executeQueryWithoutReturnedValue with query: " + query,e.getMessage(),e.getStackTrace().toString());
 			error.writeToErrorLog();
+			throw e;
 		}
 	}
 	
-	public boolean callSpWithSingleValue(String query,Queue parameters){
+	/** 
+	 * The method build PreparedStatement from the received parameters
+	 * @param query
+	 * @param parameters
+	 * @return PreparedStatement from the parameters
+	 * @throws SQLException
+	 */
+	private synchronized PreparedStatement createPreparedStatement(String query,Queue<Object> parameters) throws SQLException {
+		PreparedStatement statement = DBConnection.prepareStatement(query);
+
+		for(int parameterNum = 1;!parameters.isEmpty();parameterNum++)
+		{
+			Object parameter = parameters.poll();
+			if (parameter instanceof String) {
+				statement.setString(parameterNum,(String)parameter);
+			}
+			else if (parameter instanceof Integer) {
+				statement.setInt(parameterNum,((Integer)parameter).intValue());
+			}
+			else if (parameter instanceof Boolean){
+				statement.setBoolean(parameterNum, ((Boolean)parameter).booleanValue());
+			}
+		}
+		return statement;
+	}
+	
+	public synchronized boolean callRoutineReturnedScalarValue(String query,Queue<Object> parameters) throws SQLException{
 		int parameterNum = 1;
 		boolean returnedValue = false;
 		
@@ -89,8 +110,9 @@ public class DatabaseConnector {
 			statement.execute();
 			returnedValue = statement.getBoolean(1);	
 		} catch (SQLException e) {
-			Error error = new Error("Error Calling Stored Procedure with query: "+query,e.getMessage());
+			Error error = new Error("Error Calling Stored Procedure from callSpWithSingleValue with statement: "+query,e.getMessage(),e.getStackTrace().toString());
 			error.writeToErrorLog();
+			throw e;
 		}
 		return returnedValue;
 	}

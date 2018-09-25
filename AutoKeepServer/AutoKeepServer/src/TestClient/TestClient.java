@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
+
+import Classes.Error;
+import Classes.UserDAL;
 import Classes.UserModel;
 
 public class TestClient {
@@ -32,27 +35,29 @@ public class TestClient {
 //		
 //		System.out.println("Im here");
 		
-		Gson gson = new GsonBuilder().create();
-		ArrayList<UserModel> users = new ArrayList<>();
-		users.add(new UserModel("ab", "123", "123", "123", "333", "222", "111", true));
-		users.add(new UserModel("as", "123", "123", "123", "333", "222", "111", false));
-		String jsonStrings = gson.toJson(users);
-		
-		//send to the other side
-		System.out.println(jsonStrings);
-		
-		Type listType = new TypeToken<ArrayList<Object>>(){}.getType();
-		//System.out.println(listType);
-		ArrayList<Object> users2 = gson.fromJson(jsonStrings,listType);
-		
-		if (users2.get(0) instanceof UserModel) {
-			UserModel x = (UserModel)users2.get(0);
-			System.out.println(x.getEmailAddress());
-		}
+//		Gson gson = new GsonBuilder().create();
+//		ArrayList<UserModel> users = new ArrayList<>();
+//		users.add(new UserModel("ab", "123", "123", "123", "333", "222", "111", true));
+//		users.add(new UserModel("as", "123", "123", "123", "333", "222", "111", false));
+//		String jsonStrings = gson.toJson(users);
+//		
+//		//send to the other side
+//		System.out.println(jsonStrings);
+//		
+//		Type listType = new TypeToken<ArrayList<Object>>(){}.getType();
+//		//System.out.println(listType);
+//		ArrayList<Object> users2 = gson.fromJson(jsonStrings,listType);
+//		
+//		if (users2.get(0) instanceof UserModel) {
+//			UserModel x = (UserModel)users2.get(0);
+//			System.out.println(x.getEmailAddress());
+//		}
 		//ArrayList<UserMODEL> users2 = gson.fromJson(jsonStrings,listType);
 		//System.out.println(users2.get(0).getDateOfBirth());
 		
-	
-	
+		UserDAL dal = new UserDAL();
+		//System.out.println(dal.isUserCredentialValid(new UserModel("ab", "123", "1989-12-27", "123", "333", "222", "111", true)));
+		//dal.addUser(new UserModel("ab", "123", "1989-12-27", "123", "333", "222", "111", true));
+		
 	}
 }

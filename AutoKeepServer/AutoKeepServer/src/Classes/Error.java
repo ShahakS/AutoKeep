@@ -1,21 +1,25 @@
 package Classes;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.Queue;
 
 import Server.DatabaseConnector;
 
-public class Error extends Exception{
-
-	private static final long serialVersionUID = 5477920981041300721L;
+public class Error{
 	private String errorTimeStamp;
 	private String errorMessage;
 	private String errorDetails;
+	private String stackTrace;
 	
-	public Error(String errorMeassage,String errorDetails) {
+	public Error(String errorMeassage,String errorDetails,String stackTrace) {
 		this.errorMessage = errorMeassage;
 		this.errorDetails = errorDetails;
+		this.stackTrace = stackTrace;
 		this.errorTimeStamp = new Timestamp(System.currentTimeMillis()).toString();
 	}
 	
@@ -27,6 +31,19 @@ public class Error extends Exception{
 		parameters.add(errorTimeStamp);
 		parameters.add(errorMessage);
 		parameters.add(errorDetails);
-		DBconnector.execute(query,parameters);
+		parameters.add(stackTrace);
+		
+		try {
+			DBconnector.executeQueryWithoutReturnedValue(query,parameters);
+		} catch (SQLException e) {
+			String fileDirectory = System.getProperty("user.dir") + "\\Error_"+LocalDate.now()+".log";
+			try {
+				try(FileWriter fileWriter = new FileWriter(fileDirectory)){
+					fileWriter.write(e.getStackTrace().toString());
+				}				
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
 	}
 }
