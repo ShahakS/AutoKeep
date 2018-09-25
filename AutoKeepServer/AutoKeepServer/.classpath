@@ -7,6 +7,10 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="C:/Program Files/Microsoft SQL Server/sqljdbc_7.0/enu/mssql-jdbc-7.0.0.jre10.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Shahak/Documents/gson-2.8.5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Shahak/Documents/gson-2.8.5.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/Shahak/Documents/gson-2.8.5-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

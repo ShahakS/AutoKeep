@@ -10,6 +10,8 @@ import java.util.ArrayList;
 
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+
 import java.lang.reflect.Type;
 
 import Classes.Error;
@@ -33,29 +35,47 @@ public class TestClient {
 //			e.printStackTrace();
 //		}
 //		
-//		System.out.println("Im here");
+
+		Gson gson = new GsonBuilder().create();
+		JsonObject jsonRequest = new JsonObject();
+		jsonRequest.addProperty("api", 20);
+		String jsonString = gson.toJson(new UserModel("ab", "123", "123", "123", "333", "222", "111", true));
+		JsonParser parser1 = new JsonParser();
+		jsonRequest.add("user", gson.toJsonTree(new UserModel("ab", "123", "123", "123", "333", "222", "111", true),UserModel.class));//parser1.parse(jsonString));
 		
-//		Gson gson = new GsonBuilder().create();
+		System.out.println("CLIENT SIDE: "+ jsonRequest.toString());
+		
+		//send to server -> jsonRequest.toString()
+		
+		String clientRequest = jsonRequest.toString();
+		
+		JsonObject serverJsonRequest = new JsonObject();		
+		JsonParser parser = new JsonParser();
+		serverJsonRequest = (JsonObject)parser.parse(clientRequest);
+		System.out.println("SERVER SIDE: "+serverJsonRequest.get("api"));
+		
+		if(serverJsonRequest.get("api").getAsInt() == 20) {
+			System.out.println(serverJsonRequest.get("user").toString());
+			UserModel user = gson.fromJson(serverJsonRequest.get("user").toString(), UserModel.class);
+			System.out.println(user.getUserName());
+		}
+		
+		
 //		ArrayList<UserModel> users = new ArrayList<>();
 //		users.add(new UserModel("ab", "123", "123", "123", "333", "222", "111", true));
 //		users.add(new UserModel("as", "123", "123", "123", "333", "222", "111", false));
 //		String jsonStrings = gson.toJson(users);
 //		
-//		//send to the other side
-//		System.out.println(jsonStrings);
-//		
-//		Type listType = new TypeToken<ArrayList<Object>>(){}.getType();
-//		//System.out.println(listType);
-//		ArrayList<Object> users2 = gson.fromJson(jsonStrings,listType);
-//		
-//		if (users2.get(0) instanceof UserModel) {
-//			UserModel x = (UserModel)users2.get(0);
-//			System.out.println(x.getEmailAddress());
+//		//send to the other side	
+//		Type listType = new TypeToken<ArrayList<UserModel>>(){}.getType();
+//
+//		ArrayList<UserModel> users2 = (ArrayList<UserModel>)gson.fromJson(jsonStrings,listType);
+//		for(int i = 0;i < users2.size();i++) {
+//			System.out.println(users2.get(i).getEmailAddress());
 //		}
-		//ArrayList<UserMODEL> users2 = gson.fromJson(jsonStrings,listType);
-		//System.out.println(users2.get(0).getDateOfBirth());
 		
-		UserDAL dal = new UserDAL();
+		
+//		UserDAL dal = new UserDAL();
 		//System.out.println(dal.isUserCredentialValid(new UserModel("ab", "123", "1989-12-27", "123", "333", "222", "111", true)));
 		//dal.addUser(new UserModel("ab", "123", "1989-12-27", "123", "333", "222", "111", true));
 		
