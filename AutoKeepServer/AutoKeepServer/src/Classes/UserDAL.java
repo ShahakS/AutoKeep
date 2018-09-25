@@ -12,14 +12,14 @@ public class UserDAL {
 	 * @param password
 	 * @return true if the credential is valid, else return false
 	 */
-		public boolean isUserCredentialValid(String userName, String password) {
+		public boolean isUserCredentialValid(UserModel user) {
 			DatabaseConnector DBconnector = DatabaseConnector.getDbConnectorInstance();
-			String query = "{?= call isUserExist(?, ?)}";
+			String query = "{?= call sp_Get_IsUserExist(?, ?)}";
 			Queue<Object> parameters = new LinkedList<>();
 			boolean isUserCredentialValid;
 
-			parameters.add(userName);
-			parameters.add(password);
+			parameters.add(user.getUserName());
+			parameters.add(user.getPassword());
 			isUserCredentialValid = DBconnector.callSpWithSingleValue(query, parameters);
 
 			return isUserCredentialValid;

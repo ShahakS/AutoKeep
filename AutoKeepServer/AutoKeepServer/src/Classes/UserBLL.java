@@ -8,8 +8,8 @@ public class UserBLL {
  * @param password
  * @return true if the credential is valid, else return false
  */
-	public boolean isUserCredentialValid(String userName, String password) {
-		boolean isUserCredentialValid = new UserDAL().isUserCredentialValid(userName, password);
-		return isUserCredentialValid;
-	}
+//	public boolean isUserCredentialValid(String userName, String password) {
+//		boolean isUserCredentialValid = new UserDAL().isUserCredentialValid(UserModel);
+//		return isUserCredentialValid;
+//	}
 }
