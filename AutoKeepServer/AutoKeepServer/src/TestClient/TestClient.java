@@ -12,11 +12,11 @@ import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 
-import java.lang.reflect.Type;
+import classes.Error;
+import classes.UserDAL;
+import classes.UserModel;
 
-import Classes.Error;
-import Classes.UserDAL;
-import Classes.UserModel;
+import java.lang.reflect.Type;
 
 public class TestClient {
 	
@@ -39,8 +39,6 @@ public class TestClient {
 		Gson gson = new GsonBuilder().create();
 		JsonObject jsonRequest = new JsonObject();
 		jsonRequest.addProperty("api", 20);
-		String jsonString = gson.toJson(new UserModel("ab", "123", "123", "123", "333", "222", "111", true));
-		JsonParser parser1 = new JsonParser();
 		jsonRequest.add("user", gson.toJsonTree(new UserModel("ab", "123", "123", "123", "333", "222", "111", true),UserModel.class));//parser1.parse(jsonString));
 		
 		System.out.println("CLIENT SIDE: "+ jsonRequest.toString());
@@ -55,11 +53,9 @@ public class TestClient {
 		System.out.println("SERVER SIDE: "+serverJsonRequest.get("api"));
 		
 		if(serverJsonRequest.get("api").getAsInt() == 20) {
-			System.out.println(serverJsonRequest.get("user").toString());
 			UserModel user = gson.fromJson(serverJsonRequest.get("user").toString(), UserModel.class);
 			System.out.println(user.getUserName());
 		}
-		
 		
 //		ArrayList<UserModel> users = new ArrayList<>();
 //		users.add(new UserModel("ab", "123", "123", "123", "333", "222", "111", true));

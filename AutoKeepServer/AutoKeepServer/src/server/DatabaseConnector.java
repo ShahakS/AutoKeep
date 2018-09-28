@@ -1,4 +1,4 @@
-package Server;
+package server;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -6,7 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Queue;
 
-import Classes.Error;
+import classes.Error;
 
 public class DatabaseConnector {
 	private static DatabaseConnector DBConnector = new DatabaseConnector();

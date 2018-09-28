@@ -1,4 +1,4 @@
-package Classes;
+package classes;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import Server.DatabaseConnector;
+import server.DatabaseConnector;
 
 public class Error{
 	private String errorTimeStamp;

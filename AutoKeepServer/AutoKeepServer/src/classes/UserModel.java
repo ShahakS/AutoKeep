@@ -1,4 +1,4 @@
-package Classes;
+package classes;
 public class UserModel {
 	private int userID;
 	private String userName;

@@ -1,10 +1,10 @@
-package Classes;
+package classes;
 
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import Server.DatabaseConnector;
+import server.DatabaseConnector;
 
 public class UserDAL {
 	DatabaseConnector DBconnectort = DatabaseConnector.getDbConnectorInstance();

@@ -1,10 +1,10 @@
-package Server;
+package server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import Classes.Error;
+import classes.Error;
 
 public class Server {
 	
