@@ -2,22 +2,33 @@ package classes;
 
 public class ReservationModel {
 	private int reservationID;
-	private int reservedByUserID;
+	private UserModel user;
 	private String reservationDate;
 	private String reservationStart;
 	private String reservationEnd;
-	private boolean isDelayed;
+	private VehicleModel vehicle;
+	
 
-	public ReservationModel(int reservationID, int reservedByUserID, String reservationDate, String reservationStart,
-			String reservationEnd) {
+
+	public ReservationModel(int reservationID, UserModel user, String reservationDate, String reservationStart,
+			String reservationEnd,VehicleModel vehicle) {
 		super();
-		this.reservationID = reservationID;
-		this.reservedByUserID = reservedByUserID;
+		this.user = user;
+		this.vehicle = vehicle;
+		this.reservationID = reservationID;		
 		this.reservationDate = reservationDate;
 		this.reservationStart = reservationStart;
 		this.reservationEnd = reservationEnd;
 	}
 
+	public VehicleModel getVehicle() {
+		return vehicle;
+	}
+	
+	public void setVehicle(VehicleModel vehicle) {
+		this.vehicle = vehicle;
+	}
+	
 	public int getReservationID() {
 		return reservationID;
 	}
@@ -26,12 +37,12 @@ public class ReservationModel {
 		this.reservationID = reservationID;
 	}
 
-	public int getReservedByUserID() {
-		return reservedByUserID;
+	public UserModel getReservedByUserID() {
+		return user;
 	}
 
-	public void setReservedByUserID(int reservedByUserID) {
-		this.reservedByUserID = reservedByUserID;
+	public void setReservedByUserID(UserModel user) {
+		this.user = user;
 	}
 
 	public String getReservationDate() {
@@ -58,11 +69,4 @@ public class ReservationModel {
 		this.reservationEnd = reservationEnd;
 	}
 
-	public boolean isDelayed() {
-		return isDelayed;
-	}
-
-	public void setDelayed(boolean isDelayed) {
-		this.isDelayed = isDelayed;
-	}
 }

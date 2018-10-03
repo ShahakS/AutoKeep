@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import classes.Error;
+import classes.ErrorLog;
 
 public class Server {
 	
@@ -15,7 +15,7 @@ public class Server {
 			listeningSocket = new ServerSocket(40500);
 			
 		} catch (IOException e) {
-			Error error = new Error("Error while creating the listening socket",e.getMessage(),e.getStackTrace().toString());
+			ErrorLog error = new ErrorLog("Error while creating the listening socket",e.getMessage(),e.getStackTrace().toString());
 			error.writeToErrorLog();
 			System.exit(1);
 		}
@@ -28,7 +28,7 @@ public class Server {
 				new ClientHandler(clientSocket).start();
 				
 			} catch (IOException e) {
-				Error error = new Error("Error accepting a new client connection",e.getMessage(),e.getStackTrace().toString());
+				ErrorLog error = new ErrorLog("Error accepting a new client connection",e.getMessage(),e.getStackTrace().toString());
 				error.writeToErrorLog();
 				break;
 			}			
@@ -37,7 +37,7 @@ public class Server {
 		try {
 			listeningSocket.close();
 		} catch (IOException e) {
-			Error error = new Error("Error while closing the listening socket",e.getMessage(),e.getStackTrace().toString());
+			ErrorLog error = new ErrorLog("Error while closing the listening socket",e.getMessage(),e.getStackTrace().toString());
 			error.writeToErrorLog();
 		}
 	}

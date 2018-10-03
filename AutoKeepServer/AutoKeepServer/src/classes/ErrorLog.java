@@ -10,13 +10,13 @@ import java.util.Queue;
 
 import server.DatabaseConnector;
 
-public class Error{
+public class ErrorLog{
 	private String errorTimeStamp;
 	private String errorMessage;
 	private String errorDetails;
 	private String stackTrace;
 	
-	public Error(String errorMeassage,String errorDetails,String stackTrace) {
+	public ErrorLog(String errorMeassage,String errorDetails,String stackTrace) {
 		this.errorMessage = errorMeassage;
 		this.errorDetails = errorDetails;
 		this.stackTrace = stackTrace;

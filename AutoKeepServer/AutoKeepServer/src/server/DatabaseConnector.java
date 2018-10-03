@@ -6,7 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Queue;
 
-import classes.Error;
+import classes.ErrorLog;
 
 public class DatabaseConnector {
 	private static DatabaseConnector DBConnector = new DatabaseConnector();
@@ -54,7 +54,7 @@ public class DatabaseConnector {
 			PreparedStatement statement = createPreparedStatement(query, parameters);
 			statement.execute();
 		} catch (SQLException e) {
-			Error error = new Error("Error occurred at executeQueryWithoutReturnedValue with query: " + query,e.getMessage(),e.getStackTrace().toString());
+			ErrorLog error = new ErrorLog("Error occurred at executeQueryWithoutReturnedValue with query: " + query,e.getMessage(),e.getStackTrace().toString());
 			error.writeToErrorLog();
 			throw e;
 		}
@@ -110,7 +110,7 @@ public class DatabaseConnector {
 			statement.execute();
 			returnedValue = statement.getBoolean(1);	
 		} catch (SQLException e) {
-			Error error = new Error("Error Calling Stored Procedure from callSpWithSingleValue with statement: "+query,e.getMessage(),e.getStackTrace().toString());
+			ErrorLog error = new ErrorLog("Error Calling Stored Procedure from callSpWithSingleValue with statement: "+query,e.getMessage(),e.getStackTrace().toString());
 			error.writeToErrorLog();
 			throw e;
 		}
