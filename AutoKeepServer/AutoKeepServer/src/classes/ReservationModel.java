@@ -7,8 +7,6 @@ public class ReservationModel {
 	private String reservationStart;
 	private String reservationEnd;
 	private VehicleModel vehicle;
-	
-
 
 	public ReservationModel(int reservationID, UserModel user, String reservationDate, String reservationStart,
 			String reservationEnd,VehicleModel vehicle) {
