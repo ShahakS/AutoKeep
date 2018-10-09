@@ -1,0 +1,57 @@
+AutoKeep Client Require:
+
+Login:
+    Client send : state , user , password 
+    {
+        state : "login" ,
+        user : "user name" ,
+        password : "password"
+    }
+
+    Server send : user type , token 
+    {
+        user_type : "user" , "admin",
+        token : "adg8787878jhhh", ---> generate
+    }
+
+    the token will generate with time out session run on the server only.
+
+user menu :
+    Search Car :
+        Client send : state , token , car details
+        {
+            state : "search_car"
+            token : " dfdfdfdfd8787f8d7f8d7f"
+            start_date : "01.01.2018"
+            end_date : "30.03.2018"
+            car_type : "regular"
+            car_sit : "5"
+        }
+
+        Server send : token_status , cars_data
+        {
+            token_status : True / False
+            car_data : {[
+                car_year : "2018"
+                car_model : "Nissan"
+                car_id : "34-223-08"] ,
+                [] , []
+            }
+        }
+
+    Select Car :
+        Client send : state , token , car id , start date , end_date
+        {
+            state : "select_car"
+            token : " dfdfdfdfd8787f8d7f8d7f"
+            start_date : "01.01.2018"
+            end_date : "30.03.2018"
+            car_id : "34-223-08"
+        }
+
+        Server send : token_status , order status
+        {
+            token_status : True / False
+            order_status : True / False
+            }
+        }
