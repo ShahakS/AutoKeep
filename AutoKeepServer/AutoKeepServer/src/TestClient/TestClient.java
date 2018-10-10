@@ -22,7 +22,7 @@ import classes.UserDAL;
 import classes.UserModel;
 
 import java.lang.reflect.Type;
-
+//test
 public class TestClient {
 	
 	public static void main(String[] args) {
