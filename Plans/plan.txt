@@ -1,4 +1,5 @@
 AutoKeep Client Require:
+///// state = ProtocolMessage////
 
 Login:
     Client send : state , user , password 
@@ -8,50 +9,79 @@ Login:
         password : "password"
     }
 
-    Server send : user type , token 
+    Server send : state , user type , result
     {
-        user_type : "user" , "admin",
-        token : "adg8787878jhhh", ---> generate
+        state = "login"
+        user_type : "user" | "admin",
+        result = "ok" | "wrong"
     }
-
-    the token will generate with time out session run on the server only.
 
 user menu :
     Search Car :
-        Client send : state , token , car details
+        Client send : state ,start_date , end date , car details
         {
             state : "search_car"
-            token : " dfdfdfdfd8787f8d7f8d7f"
             start_date : "01.01.2018"
             end_date : "30.03.2018"
             car_type : "regular"
             car_sit : "5"
         }
 
-        Server send : token_status , cars_data
+        Server send : state , cars_data , result
         {
-            token_status : True / False
+            state : search_car
             car_data : {[
                 car_year : "2018"
                 car_model : "Nissan"
                 car_id : "34-223-08"] ,
                 [] , []
             }
+            result : "ok" | "not cars"
         }
 
-    Select Car :
-        Client send : state , token , car id , start date , end_date
+    Order Car :
+        Client send : state , car id , start date , end_date
         {
-            state : "select_car"
-            token : " dfdfdfdfd8787f8d7f8d7f"
+            state : "order_car"
             start_date : "01.01.2018"
             end_date : "30.03.2018"
             car_id : "34-223-08"
         }
 
-        Server send : token_status , order status
+        Server send : state , order status , result
         {
-            token_status : True / False
-            order_status : True / False
+            state : order_car
+            order_status : True | False
+            result : "ok" | "no avalibale"
             }
         }
+    
+    View Orders :
+        Client send : state
+        {
+            state : "view orders"
+        }
+
+        Server send : state , order status , result
+        {
+            state : "view orders"
+            orders : {[] ,[] ,[]
+            }
+            result : "ok" | "no avalibale"
+        }
+    
+    Change Password :
+        Client send : state , new_password
+        {
+            state : "change password"
+            password : "new_password"
+        }
+
+        Server send : state , order status , result
+        {
+            state : "change password"
+            result : "ok" | "error"
+        }
+    
+
+    
