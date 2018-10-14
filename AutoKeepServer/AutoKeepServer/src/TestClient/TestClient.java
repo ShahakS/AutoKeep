@@ -40,7 +40,6 @@ public class TestClient {
 			e.printStackTrace();
 		}
 //		
-
 //		CommunicationInterpreter c = new CommunicationInterpreter();
 //		
 //		Queue<UserModel> test = new LinkedList<>();
