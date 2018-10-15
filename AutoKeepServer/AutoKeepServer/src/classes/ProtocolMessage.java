@@ -1,6 +1,8 @@
 package classes;
 
 public enum ProtocolMessage {
+	OK,
+	WRONG_CREDENTIAL,
 	LOGIN,
 	VALIDATE_CREDENTIAL,
 	USER_MODEL,
@@ -8,7 +10,8 @@ public enum ProtocolMessage {
 	VEHICLE_MODEL,
 	USER_MODEL_LIST,
 	RESERVATION_MODEL_LIST,
-	VECHILE_MODEL_LIST;
+	VECHILE_MODEL_LIST,
+	ERROR;
 
 	public static String getRate(ProtocolMessage protocolMessage) {
 		String messageString;

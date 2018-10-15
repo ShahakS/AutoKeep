@@ -50,4 +50,19 @@ public class UserDAL {
 			parameters.add(user.isAdmin());
 			DBconnectort.executeQueryWithoutReturnedValue(query, parameters);
 		}
+
+		public UserModel getUser(String userName) {
+			String query = "{?= call fn_GetUserByUserName(?)}";
+			Queue<Object> parameters = new LinkedList<>();
+
+			parameters.add(userName);
+			try {
+				DBconnectort.callRoutineReturnedTableValue(query, parameters);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			return null;
+		}
 }

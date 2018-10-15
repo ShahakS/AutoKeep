@@ -3,9 +3,9 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Queue;
-
 import classes.ErrorLog;
 
 public class DatabaseConnector {
@@ -56,6 +56,51 @@ public class DatabaseConnector {
 		} catch (SQLException e) {
 			throw e;
 		}
+	}
+	
+	public synchronized boolean callRoutineReturnedTableValue(String query,Queue<Object> parameters) throws SQLException{
+		int parameterNum = 1;
+		boolean returnedValue = false;
+		//PreparedStatement p =createPreparedStatement(query, parameters);
+		try {
+			CallableStatement statement = DBConnection.prepareCall(query);
+			statement.registerOutParameter(parameterNum, java.sql.Types.BOOLEAN);
+			
+			for(parameterNum++;!parameters.isEmpty();parameterNum++)
+			{
+				Object parameter = parameters.poll();
+				if (parameter instanceof String) {
+					statement.setString(parameterNum,(String)parameter);
+				}
+				else if (parameter instanceof Integer) {
+					statement.setInt(parameterNum,((Integer)parameter).intValue());
+				}
+				else if (parameter instanceof Boolean){
+					statement.setBoolean(parameterNum, ((Boolean)parameter).booleanValue());
+				}
+			}
+			statement.execute();
+			ResultSet resultSet = statement.getResultSet();
+			if (resultSet.next()){
+				String userID = resultSet.getString("UserName");
+				System.out.println(userID);
+//				String firstName = resultSet.getString("firstName");
+//				String lastName = resultSet.getString("lastName");
+//				String password = resultSet.getString("password");
+//				String phone = resultSet.getString("phone");
+//				String addressStreet = resultSet.getString("addressStreet");
+//				String addressStreetNumber = resultSet.getString("addressStreetNumber");
+//				String cityAndCountry = resultSet.getString("cityAndCountry");
+//				String zipCode = resultSet.getString("zipCode");
+				
+			}
+			//returnedValue = statement.getBoolean(1);	
+		} catch (SQLException e) {
+			ErrorLog error = new ErrorLog("Error Calling Stored Procedure from callSpWithSingleValue with statement: "+query,e.getMessage(),e.getStackTrace().toString());
+			error.writeToErrorLog();
+			throw e;
+		}
+		return returnedValue;
 	}
 	
 	/** 
