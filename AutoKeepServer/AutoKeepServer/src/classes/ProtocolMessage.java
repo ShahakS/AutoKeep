@@ -1,6 +1,7 @@
 package classes;
 
 public enum ProtocolMessage {
+	LOGIN,
 	VALIDATE_CREDENTIAL,
 	USER_MODEL,
 	RESERVATION_MODEL,

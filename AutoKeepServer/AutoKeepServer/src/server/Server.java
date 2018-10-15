@@ -38,7 +38,6 @@ public class Server {
 				System.out.println("Waiting for Connection . . .");
 				clientSocket = listeningSocket.accept();
 				threadPool.execute(new ClientHandler(clientSocket));
-				
 			} catch (IOException e) {
 				ErrorLog error = new ErrorLog("Error accepting a new client connection",e.getMessage(),e.getStackTrace().toString());
 				error.writeToErrorLog();

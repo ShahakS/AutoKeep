@@ -54,8 +54,6 @@ public class DatabaseConnector {
 			PreparedStatement statement = createPreparedStatement(query, parameters);
 			statement.execute();
 		} catch (SQLException e) {
-			ErrorLog error = new ErrorLog("Error occurred at executeQueryWithoutReturnedValue with query: " + query,e.getMessage(),e.getStackTrace().toString());
-			error.writeToErrorLog();
 			throw e;
 		}
 	}

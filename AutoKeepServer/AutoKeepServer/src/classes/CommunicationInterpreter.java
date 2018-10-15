@@ -37,7 +37,7 @@ public class CommunicationInterpreter {
 	 * @return a string of json, if protocolMsg is not supported return null
 	 * @throws ClassCastException - if the protocolMsg and obj are not coordinated
 	 */
-	public String encodeToJson(ProtocolMessage protocolMsg,Object obj) throws ClassCastException{
+	public String encodeObjToJson(ProtocolMessage protocolMsg,Object obj) throws ClassCastException{
 		JsonObject jsonObj = new JsonObject();
 		jsonObj.add("protocolMsg", gson.toJsonTree(protocolMsg,ProtocolMessage.class));
 		Type listType;
@@ -86,7 +86,7 @@ public class CommunicationInterpreter {
 	 * @param jsonString - the received string to be interpreted
 	 * @return The MODEL wrapped by Object class, if protocolMsg is not recognized return null
 	 */
-	public Object decodeFromJson(String jsonString){
+	public Object decodeFromJsonToObj(String jsonString){
 			JsonObject jsonObj = (JsonObject)parser.parse(jsonString);
 			ProtocolMessage protocolMsg = gson.fromJson(jsonObj.get("protocolMsg").toString(), ProtocolMessage.class);
 			Type listType;
@@ -124,4 +124,21 @@ public class CommunicationInterpreter {
 			}
 	}
 	
+	/**
+	 * 
+	 * @param protocolMsg
+	 * @param keys
+	 * @param values
+	 * @return
+	 */
+	public String encodeParametersToJson(ProtocolMessage protocolMsg,Queue<String> keys,Queue<String> values) {
+		JsonObject jsonObj = new JsonObject();
+		jsonObj.add("protocolMsg", gson.toJsonTree(protocolMsg,ProtocolMessage.class));
+				
+		while(!keys.isEmpty()) {
+			JsonObject jsonObjValue = (JsonObject)parser.parse(values.poll());
+			jsonObj.add(keys.poll(), gson.toJsonTree(jsonObjValue));
+		}
+		return jsonObj.toString();
+	}
 }
