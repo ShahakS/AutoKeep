@@ -26,14 +26,14 @@ import java.lang.reflect.Type;
 public class TestClient {
 	
 	public static void main(String[] args) {
-		new UserDAL().getUser("sshaked");
+		//new UserDAL().getUser("sshaked");
 		ObjectInputStream readClientData = null;
 		ObjectOutputStream sendClientData = null;
 		
 		try {
 			Socket clientSocket = new Socket("localhost", 40500);
-			readClientData = new ObjectInputStream(clientSocket.getInputStream());
-			sendClientData = new ObjectOutputStream(clientSocket.getOutputStream());
+//			readClientData = new ObjectInputStream(clientSocket.getInputStream());
+//			sendClientData = new ObjectOutputStream(clientSocket.getOutputStream());
 			
 			UserModel user1 = new UserModel("qwe", "123", "123", "123", "333", "222", "111", true);
 			
@@ -43,31 +43,34 @@ public class TestClient {
 			keys.add("user");
 			values.add("{userName:"+user1.getUserName()+",password:\"123\"}");
 			
-			String str = c.encodeParametersToJson(ProtocolMessage.USER_MODEL, keys, values);
-			
+			String str = c.encodeParametersToJson(ProtocolMessage.LOGIN, keys, values);
+			System.out.println(str);
 			//sending
-			String clientData,serverData = "OK";
-			
-			try {
-				clientData = (String) readClientData.readObject();
-				System.out.println(clientData);
-				sendClientData.writeObject(serverData);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			
 			UserModel user=  (UserModel) c.decodeFromJsonToObj(str);
 			System.out.println(user.getUserName()+" "+user.getDateOfBirth()+"\n"+str);
-			
-			
-			//sendObjToClient.writeObject();
+//			
+//			String clientData,serverData = "OK";
+//			
+//			try {
+//				clientData = (String) readClientData.readObject();
+//				System.out.println(clientData);
+//				sendClientData.writeObject(serverData);
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			catch (ClassNotFoundException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			
+//			
+//			
+//			
+//			//sendObjToClient.writeObject();
 		}catch (IOException e) {
-			// TODO Auto-generated catch block
+//			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

@@ -21,7 +21,7 @@ public class UserDAL {
 			Queue<Object> parameters = new LinkedList<>();
 			boolean isUserCredentialValid;
 
-			parameters.add(user.getUserName());
+			parameters.add(user.getEmailAddress());
 			parameters.add(user.getPassword());
 			isUserCredentialValid = DBconnectort.callRoutineReturnedScalarValue(query, parameters);
 
@@ -40,7 +40,6 @@ public class UserDAL {
 			String query = "{call sp_InsertNewUser(?,?,?,?,?,?,?,?)}";
 			Queue<Object> parameters = new LinkedList<>();
 
-			parameters.add(user.getUserName());
 			parameters.add(user.getPassword());
 			parameters.add(user.getFirstName());
 			parameters.add(user.getLastName());
@@ -51,11 +50,11 @@ public class UserDAL {
 			DBconnectort.executeQueryWithoutReturnedValue(query, parameters);
 		}
 
-		public UserModel getUser(String userName) {
-			String query = "{?= call fn_GetUserByUserName(?)}";
+		public UserModel getUser(String emailAddress) {
+			String query = "{?= call fn_GetUserByEmailAddress(?)}";
 			Queue<Object> parameters = new LinkedList<>();
 
-			parameters.add(userName);
+			parameters.add(emailAddress);
 			try {
 				DBconnectort.callRoutineReturnedTableValue(query, parameters);
 			} catch (SQLException e) {

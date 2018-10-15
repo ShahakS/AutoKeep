@@ -5,6 +5,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.sql.SQLException;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import classes.CommunicationInterpreter;
 import classes.ErrorLog;
@@ -34,12 +36,14 @@ public class ClientHandler implements Runnable{
 	
 	public void run() {
 		System.out.println("Connected");
-		String clientData=null;//,serverData = ProtocolMessage.OK;
+		String clientData=null;
 		
 		try {
 			clientData = (String) readClientData.readObject();
-			//System.out.println(clientData);
-			//sendClientData.writeObject(serverData);
+			System.out.println(clientData);
+			String jsonString = bll(clientData);
+			sendObjToClient(jsonString);
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -48,20 +52,21 @@ public class ClientHandler implements Runnable{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		bll(clientData);
+		
 	}
 	
 	public String bll(String clientResponse) {
+		String answer = null;
+		
 		switch(interpreter.getProtocolMsg(clientResponse)) {
 		case LOGIN:
-			login((UserModel)interpreter.decodeFromJsonToObj(clientResponse));	
-			//send
+			answer = login((UserModel)interpreter.decodeFromJsonToObj(clientResponse));			
 			break;
 		}
-		return clientResponse;
+		return answer;
 	}
-
-	private boolean login(UserModel user) {
+	
+	private String login(UserModel user) {
 		boolean isCredentialValid = false;
 		ProtocolMessage protocolMessage;
 		UserDAL userDAL = new UserDAL();
@@ -79,6 +84,18 @@ public class ClientHandler implements Runnable{
 		} catch (SQLException e) {
 			protocolMessage = ProtocolMessage.ERROR;
 		}
-		return isCredentialValid; 
+		
+		 Queue<String> keys= new LinkedList<>();
+		 Queue<String> values = new LinkedList<>();
+		 keys.add("user");
+		 values.add("{IsAdministrator:\"false\"}");
+		
+		 System.out.println(protocolMessage +" " + protocolMessage.getRate(protocolMessage));
+		return interpreter.encodeParametersToJson(protocolMessage,keys,values);
+	}
+	
+	private void sendObjToClient(String jsonString) throws IOException {
+		sendClientData.reset();
+		sendClientData.writeObject(jsonString);	
 	}
 }

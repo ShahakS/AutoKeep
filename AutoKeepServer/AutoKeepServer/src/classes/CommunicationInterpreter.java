@@ -92,7 +92,7 @@ public class CommunicationInterpreter {
 			Type listType;
 			
 			switch(protocolMsg) {
-			case USER_MODEL:
+			case LOGIN:
 				UserModel user = gson.fromJson(jsonObj.get("user").toString(), UserModel.class);
 				return user;
 				

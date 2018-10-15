@@ -17,7 +17,7 @@ public enum ProtocolMessage {
 		String messageString;
 	
 		switch (protocolMessage) {
-			case USER_MODEL:
+			case LOGIN:
 				messageString = "The Class type is UserModel.class";
 				break;
 			case RESERVATION_MODEL:
@@ -35,8 +35,10 @@ public enum ProtocolMessage {
 			case VECHILE_MODEL_LIST:
 				messageString = "The Class type is .class";
 				break;
-			default:
+			case ERROR:
 				messageString = "Fatal error. Please contact suppport";
+			default:
+				messageString = "";
 		}
 		
 		return messageString;
