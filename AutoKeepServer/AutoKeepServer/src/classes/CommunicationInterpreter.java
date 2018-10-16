@@ -30,6 +30,12 @@ public class CommunicationInterpreter {
 		return gson.fromJson(jsonObj.get("protocolMsg").toString(), ProtocolMessage.class);
 	}
 	
+	public String setProtocolMsg(ProtocolMessage protocolMsg){
+		JsonObject jsonObj = new JsonObject();
+		jsonObj.add("protocolMsg", gson.toJsonTree(protocolMsg,ProtocolMessage.class));
+		return jsonObj.toString();
+	}
+	
 	/**
 	 * The method return a string of json that represents the data
 	 * @param protocolMsg - the protocol rule

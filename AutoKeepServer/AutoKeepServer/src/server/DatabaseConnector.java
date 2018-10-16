@@ -48,7 +48,7 @@ public class DatabaseConnector {
 	 * @param parameters
 	 * @throws SQLException
 	 */
-	public synchronized void executeQueryWithoutReturnedValue(String query,Queue<Object> parameters) throws SQLException{
+	public synchronized void executeSqlStatement(String query,Queue<Object> parameters) throws SQLException{
 		
 		try {
 			PreparedStatement statement = createPreparedStatement(query, parameters);
@@ -58,49 +58,17 @@ public class DatabaseConnector {
 		}
 	}
 	
-	public synchronized boolean callRoutineReturnedTableValue(String query,Queue<Object> parameters) throws SQLException{
-		int parameterNum = 1;
-		boolean returnedValue = false;
-		//PreparedStatement p =createPreparedStatement(query, parameters);
+public synchronized ResultSet executeSqlStatementDataTable(String query,Queue<Object> parameters) throws SQLException{
+		ResultSet resultSet = null;
+		
 		try {
-			CallableStatement statement = DBConnection.prepareCall(query);
-			statement.registerOutParameter(parameterNum, java.sql.Types.BOOLEAN);
-			
-			for(parameterNum++;!parameters.isEmpty();parameterNum++)
-			{
-				Object parameter = parameters.poll();
-				if (parameter instanceof String) {
-					statement.setString(parameterNum,(String)parameter);
-				}
-				else if (parameter instanceof Integer) {
-					statement.setInt(parameterNum,((Integer)parameter).intValue());
-				}
-				else if (parameter instanceof Boolean){
-					statement.setBoolean(parameterNum, ((Boolean)parameter).booleanValue());
-				}
-			}
+			PreparedStatement statement = createPreparedStatement(query, parameters);
 			statement.execute();
-			ResultSet resultSet = statement.getResultSet();
-			if (resultSet.next()){
-				String userID = resultSet.getString("UserName");
-				System.out.println(userID);
-//				String firstName = resultSet.getString("firstName");
-//				String lastName = resultSet.getString("lastName");
-//				String password = resultSet.getString("password");
-//				String phone = resultSet.getString("phone");
-//				String addressStreet = resultSet.getString("addressStreet");
-//				String addressStreetNumber = resultSet.getString("addressStreetNumber");
-//				String cityAndCountry = resultSet.getString("cityAndCountry");
-//				String zipCode = resultSet.getString("zipCode");
-				
-			}
-			//returnedValue = statement.getBoolean(1);	
+			resultSet = statement.getResultSet();
 		} catch (SQLException e) {
-			ErrorLog error = new ErrorLog("Error Calling Stored Procedure from callSpWithSingleValue with statement: "+query,e.getMessage(),e.getStackTrace().toString());
-			error.writeToErrorLog();
 			throw e;
 		}
-		return returnedValue;
+		return resultSet;
 	}
 	
 	/** 
@@ -153,7 +121,7 @@ public class DatabaseConnector {
 			statement.execute();
 			returnedValue = statement.getBoolean(1);	
 		} catch (SQLException e) {
-			ErrorLog error = new ErrorLog("Error Calling Stored Procedure from callSpWithSingleValue with statement: "+query,e.getMessage(),e.getStackTrace().toString());
+			ErrorLog error = new ErrorLog("Error Calling Stored Procedure from callSpWithSingleValue with statement: "+query ,e.getMessage(),e.getStackTrace().toString());
 			error.writeToErrorLog();
 			throw e;
 		}

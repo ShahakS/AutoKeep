@@ -36,23 +36,37 @@ public class ClientHandler implements Runnable{
 	
 	public void run() {
 		System.out.println("Connected");
-		String clientData=null;
+		String clientCredential = null;
+		boolean isAuthenticated = false;
 		
-		try {
-			clientData = (String) readClientData.readObject();
-			System.out.println(clientData);
-			String jsonString = bll(clientData);
-			sendObjToClient(jsonString);
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		
+		for(int numOfRetries = 3;!isAuthenticated && numOfRetries > 0;numOfRetries--) {
+			try {
+				clientCredential = readClientData();
+				String answer = connect((UserModel)interpreter.decodeFromJsonToObj(clientCredential));
+				
+			} catch (ClassNotFoundException | IOException e) {
+				interpreter.setProtocolMsg(answer)
+			}
+			sendObjToClient(answer);
 		}
 		
+		while(isAuthenticated) {
+			try {
+				clientCredential = (String) readClientData.readObject();
+				System.out.println(clientCredential);
+				String jsonString = bll(clientCredential);
+				sendObjToClient(jsonString);
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		System.out.println("Disconnected");
 	}
 	
 	public String bll(String clientResponse) {
@@ -66,7 +80,7 @@ public class ClientHandler implements Runnable{
 		return answer;
 	}
 	
-	private String login(UserModel user) {
+	private String connect(UserModel user) {
 		boolean isCredentialValid = false;
 		ProtocolMessage protocolMessage;
 		UserDAL userDAL = new UserDAL();
@@ -90,12 +104,15 @@ public class ClientHandler implements Runnable{
 		 keys.add("user");
 		 values.add("{IsAdministrator:\"false\"}");
 		
-		 System.out.println(protocolMessage +" " + protocolMessage.getRate(protocolMessage));
 		return interpreter.encodeParametersToJson(protocolMessage,keys,values);
 	}
 	
 	private void sendObjToClient(String jsonString) throws IOException {
 		sendClientData.reset();
 		sendClientData.writeObject(jsonString);	
+	}
+	
+	private String readClientData() throws ClassNotFoundException, IOException {
+		return (String) readClientData.readObject();
 	}
 }

@@ -1,5 +1,6 @@
 package classes;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -32,8 +33,8 @@ public class UserDAL {
 			String query = "{call sp_DeleteUser(?)}";
 			Queue<Object> parameters = new LinkedList<>();
 
-			parameters.add(user.getUserID());
-			DBconnectort.executeQueryWithoutReturnedValue(query, parameters);
+			parameters.add(user.getEmailAddress());
+			DBconnectort.executeSqlStatement(query, parameters);
 		}
 		
 		public void addUser(UserModel user) throws SQLException {
@@ -46,22 +47,28 @@ public class UserDAL {
 			parameters.add(user.getPhoneNumber());
 			parameters.add(user.getEmailAddress());
 			parameters.add(user.getDateOfBirth());
-			parameters.add(user.isAdmin());
-			DBconnectort.executeQueryWithoutReturnedValue(query, parameters);
+			parameters.add(user.IsAdministrator());
+			DBconnectort.executeSqlStatement(query, parameters);
 		}
 
-		public UserModel getUser(String emailAddress) {
-			String query = "{?= call fn_GetUserByEmailAddress(?)}";
+		public UserModel getUser(String emailAddress) throws SQLException{
+			String query = "SELECT * FROM fn_GetUserByEmailAddress(?)";
 			Queue<Object> parameters = new LinkedList<>();
-
-			parameters.add(emailAddress);
-			try {
-				DBconnectort.callRoutineReturnedTableValue(query, parameters);
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			UserModel user = null;
+			
+			parameters.add(emailAddress);			
+			ResultSet resultSet = DBconnectort.executeSqlStatementDataTable(query, parameters);
+			
+			while (resultSet.next()){
+				String password = resultSet.getString("password");
+				String dateOfBirth = resultSet.getString("dateOfBirth");
+				String firstName = resultSet.getString("firstName");
+				String lastName = resultSet.getString("lastName");
+				String phoneNumber = resultSet.getString("phoneNumber");
+				boolean IsAdministrator = resultSet.getBoolean("IsAdministrator");
+				user = new UserModel(emailAddress, password, dateOfBirth, firstName, lastName, phoneNumber, IsAdministrator);
 			}
-
-			return null;
+					
+			return user;
 		}
 }

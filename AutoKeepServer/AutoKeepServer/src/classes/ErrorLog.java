@@ -34,7 +34,7 @@ public class ErrorLog{
 		parameters.add(stackTrace);
 		
 		try {
-			DBconnector.executeQueryWithoutReturnedValue(query,parameters);
+			DBconnector.executeSqlStatement(query,parameters);
 		} catch (SQLException e) {
 			String fileDirectory = System.getProperty("user.dir") + "\\Error_"+LocalDate.now()+".log";
 			try {

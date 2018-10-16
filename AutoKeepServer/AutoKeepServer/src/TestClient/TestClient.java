@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -26,29 +27,36 @@ import java.lang.reflect.Type;
 public class TestClient {
 	
 	public static void main(String[] args) {
-		//new UserDAL().getUser("sshaked");
-		ObjectInputStream readClientData = null;
-		ObjectOutputStream sendClientData = null;
-		
 		try {
-			Socket clientSocket = new Socket("localhost", 40500);
-//			readClientData = new ObjectInputStream(clientSocket.getInputStream());
-//			sendClientData = new ObjectOutputStream(clientSocket.getOutputStream());
-			
-			UserModel user1 = new UserModel("qwe", "123", "123", "123", "333", "222", "111", true);
-			
-			CommunicationInterpreter c = new CommunicationInterpreter();
-			Queue<String> keys = new LinkedList<>();
-			Queue<String> values = new LinkedList<>();
-			keys.add("user");
-			values.add("{userName:"+user1.getUserName()+",password:\"123\"}");
-			
-			String str = c.encodeParametersToJson(ProtocolMessage.LOGIN, keys, values);
-			System.out.println(str);
-			//sending
-			
-			UserModel user=  (UserModel) c.decodeFromJsonToObj(str);
-			System.out.println(user.getUserName()+" "+user.getDateOfBirth()+"\n"+str);
+			UserModel user = new UserDAL().getUser("yuval.teltech@gmfail.com");
+			System.out.println(user.getLastName());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+//		ObjectInputStream readClientData = null;
+//		ObjectOutputStream sendClientData = null;
+//		
+//		try {
+//			Socket clientSocket = new Socket("localhost", 40500);
+////			readClientData = new ObjectInputStream(clientSocket.getInputStream());
+////			sendClientData = new ObjectOutputStream(clientSocket.getOutputStream());
+//			
+//			UserModel user1 = new UserModel("qwe@gmail.com", "123", "123", "123", "333", "222", true);
+//			
+//			CommunicationInterpreter c = new CommunicationInterpreter();
+//			Queue<String> keys = new LinkedList<>();
+//			Queue<String> values = new LinkedList<>();
+//			keys.add("user");
+//			values.add("{userName:"+"sshaked"+",password:\"123\"}");
+//			
+//			String str = c.encodeParametersToJson(ProtocolMessage.LOGIN, keys, values);
+//			System.out.println(str);
+//			//sending
+//			
+//			UserModel user=  (UserModel) c.decodeFromJsonToObj(str);
+//			System.out.println(user.getDateOfBirth()+"\n"+str);
 //			
 //			String clientData,serverData = "OK";
 //			
@@ -69,10 +77,10 @@ public class TestClient {
 //			
 //			
 //			//sendObjToClient.writeObject();
-		}catch (IOException e) {
-//			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		}catch (IOException e) {
+////			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 
 //		Queue<UserModel> test = new LinkedList<>();
 //		test.add(new UserModel("ab", "123", "123", "123", "333", "222", "111", true));

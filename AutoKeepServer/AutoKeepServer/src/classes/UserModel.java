@@ -1,16 +1,15 @@
 package classes;
 public class UserModel {
-	private int userID;
 	private String emailAddress;
 	private String password;
 	private String dateOfBirth;//1989-12-27
 	private String firstName;
 	private String lastName;
 	private String phoneNumber;
-	private boolean isAdmin = false;
+	private boolean IsAdministrator = false;
 	
-	public UserModel(String password, String dateOfBirth, String firstName, String lastName,
-			String emailAddress, String phoneNumber, boolean isAdmin) {
+	public UserModel(String emailAddress,String password, String dateOfBirth, String firstName, String lastName,
+			String phoneNumber, boolean IsAdministrator) {
 		super();
 		this.password = password;
 		this.dateOfBirth = dateOfBirth;
@@ -18,13 +17,9 @@ public class UserModel {
 		this.lastName = lastName;
 		this.emailAddress = emailAddress;
 		this.phoneNumber = phoneNumber;
-		this.isAdmin = isAdmin;
+		this.IsAdministrator = IsAdministrator;
 	}
 
-	public int getUserID() {
-		return userID;
-	}
-	
 	public String getPassword() {
 		return password;
 	}
@@ -73,7 +68,7 @@ public class UserModel {
 		this.phoneNumber = phoneNumber;
 	}
 
-	public boolean isAdmin() {
-		return isAdmin;
+	public boolean IsAdministrator() {
+		return IsAdministrator;
 	}
 }

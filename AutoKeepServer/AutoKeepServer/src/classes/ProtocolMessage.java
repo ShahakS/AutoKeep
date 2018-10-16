@@ -13,10 +13,12 @@ public enum ProtocolMessage {
 	VECHILE_MODEL_LIST,
 	ERROR;
 
-	public static String getRate(ProtocolMessage protocolMessage) {
+	public static String getStatus(ProtocolMessage protocolMessage) {
 		String messageString;
 	
 		switch (protocolMessage) {
+			case OK:
+				messageString = "OK";
 			case LOGIN:
 				messageString = "The Class type is UserModel.class";
 				break;
