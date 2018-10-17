@@ -40,18 +40,18 @@ public class ClientHandler implements Runnable{
 		boolean isAuthenticated = false;
 		
 		
-		for(int numOfRetries = 3;!isAuthenticated && numOfRetries > 0;numOfRetries--) {
-			try {
-				clientCredential = readClientData();
-				String answer = connect((UserModel)interpreter.decodeFromJsonToObj(clientCredential));
-				
-			} catch (ClassNotFoundException | IOException e) {
-				interpreter.setProtocolMsg(answer)
-			}
-			sendObjToClient(answer);
-		}
+//		for(int numOfRetries = 3;!isAuthenticated && numOfRetries > 0;numOfRetries--) {
+//			try {
+//				clientCredential = readClientData();
+//				String answer = connect((UserModel)interpreter.decodeFromJsonToObj(clientCredential));
+//				
+//			} catch (ClassNotFoundException | IOException e) {
+//				interpreter.setProtocolMsg(answer)
+//			}
+//			sendObjToClient(answer);
+//		}
 		
-		while(isAuthenticated) {
+		while(true) {
 			try {
 				clientCredential = (String) readClientData.readObject();
 				System.out.println(clientCredential);
@@ -66,7 +66,7 @@ public class ClientHandler implements Runnable{
 				e.printStackTrace();
 			}
 		}
-		System.out.println("Disconnected");
+		//System.out.println("Disconnected");
 	}
 	
 	public String bll(String clientResponse) {
@@ -74,7 +74,7 @@ public class ClientHandler implements Runnable{
 		
 		switch(interpreter.getProtocolMsg(clientResponse)) {
 		case LOGIN:
-			answer = login((UserModel)interpreter.decodeFromJsonToObj(clientResponse));			
+			answer = connect((UserModel)interpreter.decodeFromJsonToObj(clientResponse));			
 			break;
 		}
 		return answer;
