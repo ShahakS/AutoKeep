@@ -23,10 +23,12 @@ user menu :
         Client send : ProtocolMessage ,start_date , end date , car details
         {
             ProtocolMessage : "search_car"
-            start_date : "01.01.2018"
-            end_date : "30.03.2018"
-            car_type : "regular"
-            car_sit : "5"
+            searchCar : {[
+                start_date : "01.01.2018"
+                end_date : "30.03.2018"
+                car_type : "regular"
+                car_sit : "5"
+            ]}
         }
 
         Server send : ProtocolMessage , cars_data , result
@@ -45,9 +47,11 @@ user menu :
         Client send : ProtocolMessage , car id , start date , end_date
         {
             ProtocolMessage : "order_car"
-            start_date : "01.01.2018"
-            end_date : "30.03.2018"
-            car_id : "34-223-08"
+            order : {[
+                start_date : "01.01.2018"
+                end_date : "30.03.2018"
+                car_id : "34-223-08"
+            ]}
         }
 
         Server send : ProtocolMessage , order status , result
@@ -67,16 +71,20 @@ user menu :
         Server send : ProtocolMessage , order status , result
         {
             ProtocolMessage : "view orders"
-            orders : {[] ,[] ,[]
+            orders : {
+                [] ,[] ,[]
             }
             result : "ok" | "no avalibale"
         }
     
     Change Password :
-        Client send : ProtocolMessage , new_password
+        Client send : ProtocolMessage , old ,new_password
         {
             ProtocolMessage : "change password"
-            password : "new_password"
+            password : {[
+                old_password : "old"
+                new_password : "new_password"
+            ]}
         }
 
         Server send : ProtocolMessage , order status , result
