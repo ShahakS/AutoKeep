@@ -1,35 +1,37 @@
- AutoKeep Client Require:
-///// state = ProtocolMessage////
+AutoKeep Client Require:
+///// ProtocolMessage = ProtocolMessage////
 
 Login:
-    Client send : state , user , password 
+    Client send : ProtocolMessage , emailAddress , password 
     {
-        state : "login" ,
-        user : "user name" ,
-        password : "password"
+        ProtocolMessage : "LOGIN" ,
+        user : {[
+            emailAddress : "user name" ,
+            password : "password"
+            }]
     }
 
-    Server send : state , user type , result
+    Server send : ProtocolMessage , user type , result
     {
-        state = "login"
+        ProtocolMessage = "login"
         user_type : "user" | "admin",
         result = "ok" | "wrong"
     }
 
 user menu :
     Search Car :
-        Client send : state ,start_date , end date , car details
+        Client send : ProtocolMessage ,start_date , end date , car details
         {
-            state : "search_car"
+            ProtocolMessage : "search_car"
             start_date : "01.01.2018"
             end_date : "30.03.2018"
             car_type : "regular"
             car_sit : "5"
         }
 
-        Server send : state , cars_data , result
+        Server send : ProtocolMessage , cars_data , result
         {
-            state : search_car
+            ProtocolMessage : search_car
             car_data : {[
                 car_year : "2018"
                 car_model : "Nissan"
@@ -40,46 +42,46 @@ user menu :
         }
 
     Order Car :
-        Client send : state , car id , start date , end_date
+        Client send : ProtocolMessage , car id , start date , end_date
         {
-            state : "order_car"
+            ProtocolMessage : "order_car"
             start_date : "01.01.2018"
             end_date : "30.03.2018"
             car_id : "34-223-08"
         }
 
-        Server send : state , order status , result
+        Server send : ProtocolMessage , order status , result
         {
-            state : order_car
+            ProtocolMessage : order_car
             order_status : True | False
             result : "ok" | "no avalibale"
             }
         }
     
     View Orders :
-        Client send : state
+        Client send : ProtocolMessage
         {
-            state : "view orders"
+            ProtocolMessage : "view orders"
         }
 
-        Server send : state , order status , result
+        Server send : ProtocolMessage , order status , result
         {
-            state : "view orders"
+            ProtocolMessage : "view orders"
             orders : {[] ,[] ,[]
             }
             result : "ok" | "no avalibale"
         }
     
     Change Password :
-        Client send : state , new_password
+        Client send : ProtocolMessage , new_password
         {
-            state : "change password"
+            ProtocolMessage : "change password"
             password : "new_password"
         }
 
-        Server send : state , order status , result
+        Server send : ProtocolMessage , order status , result
         {
-            state : "change password"
+            ProtocolMessage : "change password"
             result : "ok" | "error"
         }
     
