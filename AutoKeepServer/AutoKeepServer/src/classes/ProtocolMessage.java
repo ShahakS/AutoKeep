@@ -11,7 +11,11 @@ public enum ProtocolMessage {
 	USER_MODEL_LIST,
 	RESERVATION_MODEL_LIST,
 	VECHILE_MODEL_LIST,
-	ERROR;
+	
+	//Error Messages - Except ERROR all other error used for messages only
+	ERROR,
+	TOO_MANY_AUTHENTICATION_RETRIES,	
+	INTERNAL_ERROR;
 
 	public static String getStatus(ProtocolMessage protocolMessage) {
 		String messageString;
@@ -19,30 +23,23 @@ public enum ProtocolMessage {
 		switch (protocolMessage) {
 			case OK:
 				messageString = "OK";
-			case LOGIN:
-				messageString = "The Class type is UserModel.class";
 				break;
-			case RESERVATION_MODEL:
-				messageString = "The Class type is .class";
+				
+			case WRONG_CREDENTIAL:
+				messageString = "Email or password is incorrect";
 				break;
-			case VEHICLE_MODEL:
-				messageString = "The Class type is .class";
+				
+			case TOO_MANY_AUTHENTICATION_RETRIES:
+				messageString = "You have been tried to connect 5 times.\nPlease Try again later";
 				break;
-			case USER_MODEL_LIST:
-				messageString = "The Class type is .class";
+				
+			case INTERNAL_ERROR:
+				messageString = "Internal error.\nPlease contact suppport";
 				break;
-			case RESERVATION_MODEL_LIST:
-				messageString = "The Class type is .class";
-				break;
-			case VECHILE_MODEL_LIST:
-				messageString = "The Class type is .class";
-				break;
-			case ERROR:
-				messageString = "Fatal error. Please contact suppport";
+				
 			default:
 				messageString = "";
-		}
-		
+		}		
 		return messageString;
 	}
 }

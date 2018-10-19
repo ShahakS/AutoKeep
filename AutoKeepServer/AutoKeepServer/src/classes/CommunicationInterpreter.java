@@ -26,7 +26,7 @@ public class CommunicationInterpreter {
 	 * @return the protocol message
 	 */
 	public ProtocolMessage getProtocolMsg(String jsonString) {
-		JsonObject jsonObj = (JsonObject)parser.parse(jsonString);		
+		JsonObject jsonObj = (JsonObject)parser.parse(jsonString);
 		return gson.fromJson(jsonObj.get("protocolMsg").toString(), ProtocolMessage.class);
 	}
 	
@@ -61,7 +61,7 @@ public class CommunicationInterpreter {
 			case VEHICLE_MODEL:
 				jsonObj.add("vehicle", gson.toJsonTree((VehicleModel)obj,VehicleModel.class));
 				return jsonObj.toString();
-				//TODO add Exception throw
+				
 			case USER_MODEL_LIST:	
 				listType = new TypeToken<Queue<UserModel>>(){}.getType();
 				jsonObj.add("users", gson.toJsonTree(obj,listType));
@@ -75,6 +75,12 @@ public class CommunicationInterpreter {
 			case VECHILE_MODEL_LIST:		
 				listType = new TypeToken<Queue<VehicleModel>>(){}.getType();
 				jsonObj.add("vechiles", gson.toJsonTree(obj,listType));
+				return jsonObj.toString();
+			
+			case OK:
+			case WRONG_CREDENTIAL:
+			case ERROR:
+				jsonObj.add("message", gson.toJsonTree((String)obj,String.class));				
 				return jsonObj.toString();
 				
 			default:

@@ -21,11 +21,12 @@ public class ErrorLog{
 		this.errorDetails = errorDetails;
 		this.stackTrace = stackTrace;
 		this.errorTimeStamp = new Timestamp(System.currentTimeMillis()).toString();
+		writeToErrorLog();
 	}
 	
 	public void writeToErrorLog() {
 		DatabaseConnector DBconnector = DatabaseConnector.getDbConnectorInstance();
-		String query = "insert into ErrorLog(ErrorTime,ErrorMessage,ErrorDetails) values(?,?,?)";
+		String query = "insert into ErrorLog(ErrorTime,ErrorMessage,ErrorDetails,StackTrcae) values(?,?,?,?)";
 		Queue<Object> parameters = new LinkedList<>();
 		
 		parameters.add(errorTimeStamp);

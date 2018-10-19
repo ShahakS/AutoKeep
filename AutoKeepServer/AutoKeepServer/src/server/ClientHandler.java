@@ -5,114 +5,70 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.sql.SQLException;
-import java.util.LinkedList;
-import java.util.Queue;
 
 import classes.CommunicationInterpreter;
 import classes.ErrorLog;
 import classes.ProtocolMessage;
-import classes.UserDAL;
+import classes.UserBLL;
 import classes.UserModel;
 
 public class ClientHandler implements Runnable{
 	private Socket clientSocket;
-	private DatabaseConnector db;
 	private CommunicationInterpreter interpreter;
 	private ObjectInputStream readClientData;
 	private ObjectOutputStream sendClientData;
 	
-	public ClientHandler(Socket socket){
+	public ClientHandler(Socket socket) throws IOException{
 		this.clientSocket = socket;
-		this.db = DatabaseConnector.getDbConnectorInstance();
 		this.interpreter = new CommunicationInterpreter();
-		try {
-			this.readClientData = new ObjectInputStream(socket.getInputStream());
-			this.sendClientData = new ObjectOutputStream(socket.getOutputStream());
-		} catch (IOException e) {
-			ErrorLog error = new ErrorLog("Error while creating input/output stream",e.getMessage(),e.getStackTrace().toString());
-			error.writeToErrorLog();
-		}		
+		this.readClientData = new ObjectInputStream(clientSocket.getInputStream());
+		this.sendClientData = new ObjectOutputStream(clientSocket.getOutputStream());
 	}
 	
 	public void run() {
 		System.out.println("Connected");
-		String clientCredential = null;
+		ClientHandlerBLL clientHandlerBLL = new ClientHandlerBLL();
 		boolean isAuthenticated = false;
 		
+		clientHandlerBLL.connect();
 		
-//		for(int numOfRetries = 3;!isAuthenticated && numOfRetries > 0;numOfRetries--) {
-//			try {
-//				clientCredential = readClientData();
-//				String answer = connect((UserModel)interpreter.decodeFromJsonToObj(clientCredential));
-//				
-//			} catch (ClassNotFoundException | IOException e) {
-//				interpreter.setProtocolMsg(answer)
+		
+		if (isAuthenticated) {
+//			while(true) {
+	//			try {
+	//				clientCredential = (String) readClientData.readObject();
+	//				System.out.println(clientCredential);
+	//				String jsonString = bll(clientCredential);
+	//				sendObjToClient(jsonString);
+	//				
+	//			} catch (IOException e) {
+	//				// TODO Auto-generated catch block
+	//				e.printStackTrace();
+	//			}catch (ClassNotFoundException e) {
+	//				// TODO Auto-generated catch block
+	//				e.printStackTrace();
+	//			}
 //			}
-//			sendObjToClient(answer);
-//		}
-		
-		while(true) {
-			try {
-				clientCredential = (String) readClientData.readObject();
-				System.out.println(clientCredential);
-				String jsonString = bll(clientCredential);
-				sendObjToClient(jsonString);
-				
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		//System.out.println("Disconnected");
+		}else{
+			String errorMsg = ProtocolMessage.getStatus(ProtocolMessage.TOO_MANY_AUTHENTICATION_RETRIES);
+			String errorString = interpreter.encodeObjToJson(ProtocolMessage.ERROR,errorMsg);
+			sendObjToClient(errorString);
+		}			
 	}
 	
 	public String bll(String clientResponse) {
 		String answer = null;
 		
 		switch(interpreter.getProtocolMsg(clientResponse)) {
-		case LOGIN:
-			answer = connect((UserModel)interpreter.decodeFromJsonToObj(clientResponse));			
+			case LOGIN:
+						
 			break;
+			
+			default:
+				
 		}
 		return answer;
 	}
+
 	
-	private String connect(UserModel user) {
-		boolean isCredentialValid = false;
-		ProtocolMessage protocolMessage;
-		UserDAL userDAL = new UserDAL();
-		
-		try {
-			 isCredentialValid = userDAL.isUserCredentialValid(user);
-			 
-			 if (isCredentialValid) {
-				protocolMessage = ProtocolMessage.OK;
-				//UserModel x= userDAL.getUser(user.getUserName());
-			}
-			 else {
-				 protocolMessage = ProtocolMessage.WRONG_CREDENTIAL;
-			 }
-		} catch (SQLException e) {
-			protocolMessage = ProtocolMessage.ERROR;
-		}
-		
-		 Queue<String> keys= new LinkedList<>();
-		 Queue<String> values = new LinkedList<>();
-		 keys.add("user");
-		 values.add("{IsAdministrator:\"false\"}");
-		
-		return interpreter.encodeParametersToJson(protocolMessage,keys,values);
-	}
-	
-	private void sendObjToClient(String jsonString) throws IOException {
-		sendClientData.reset();
-		sendClientData.writeObject(jsonString);	
-	}
-	
-	private String readClientData() throws ClassNotFoundException, IOException {
-		return (String) readClientData.readObject();
-	}
 }

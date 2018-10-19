@@ -8,7 +8,7 @@ import java.util.Queue;
 import server.DatabaseConnector;
 
 public class UserDAL {
-	DatabaseConnector DBconnectort = DatabaseConnector.getDbConnectorInstance();
+	DatabaseConnector DBconnector = DatabaseConnector.getDbConnectorInstance();
 	
 	/**
 	 * 
@@ -24,8 +24,8 @@ public class UserDAL {
 
 			parameters.add(user.getEmailAddress());
 			parameters.add(user.getPassword());
-			isUserCredentialValid = DBconnectort.callRoutineReturnedScalarValue(query, parameters);
-
+			isUserCredentialValid = DBconnector.callRoutineReturnedScalarValue(query, parameters);
+			
 			return isUserCredentialValid;
 		}
 		
@@ -34,7 +34,7 @@ public class UserDAL {
 			Queue<Object> parameters = new LinkedList<>();
 
 			parameters.add(user.getEmailAddress());
-			DBconnectort.executeSqlStatement(query, parameters);
+			DBconnector.executeSqlStatement(query, parameters);
 		}
 		
 		public void addUser(UserModel user) throws SQLException {
@@ -48,7 +48,7 @@ public class UserDAL {
 			parameters.add(user.getEmailAddress());
 			parameters.add(user.getDateOfBirth());
 			parameters.add(user.IsAdministrator());
-			DBconnectort.executeSqlStatement(query, parameters);
+			DBconnector.executeSqlStatement(query, parameters);
 		}
 
 		public UserModel getUser(String emailAddress) throws SQLException{
@@ -57,7 +57,7 @@ public class UserDAL {
 			UserModel user = null;
 			
 			parameters.add(emailAddress);			
-			ResultSet resultSet = DBconnectort.executeSqlStatementDataTable(query, parameters);
+			ResultSet resultSet = DBconnector.executeSqlStatementDataTable(query, parameters);
 			
 			while (resultSet.next()){
 				String password = resultSet.getString("password");
