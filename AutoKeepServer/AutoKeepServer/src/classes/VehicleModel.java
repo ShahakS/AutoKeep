@@ -4,6 +4,7 @@ public class VehicleModel {
 	private int vehicleID;
 	private String manufactureName;
 	private String model;
+	private String vehicleType;
 	private int manufactureYear;
 	private int seatsNumber;
 	private int engineCapacity;
@@ -11,12 +12,13 @@ public class VehicleModel {
 	private int kilometers;
 	private String vehicleImage;
 	
-	public VehicleModel(int vehicleID, String manufactureName, String model, int manufactureYear, int seatsNumber,
-			int engineCapacity, boolean isUsable, int kilometers,String vehicleImage) {
+	public VehicleModel(int vehicleID, String manufactureName, String model, String vehicleType, int manufactureYear,
+			int seatsNumber, int engineCapacity, boolean isUsable, int kilometers, String vehicleImage) {
 		super();
 		this.vehicleID = vehicleID;
 		this.manufactureName = manufactureName;
 		this.model = model;
+		this.vehicleType = vehicleType;
 		this.manufactureYear = manufactureYear;
 		this.seatsNumber = seatsNumber;
 		this.engineCapacity = engineCapacity;
@@ -97,4 +99,11 @@ public class VehicleModel {
 		this.vehicleImage = vehicleImage;
 	}
 
+	public String getVehicleType() {
+		return vehicleType;
+	}
+
+	public void setVehicleType(String vehicleType) {
+		this.vehicleType = vehicleType;
+	}
 }
