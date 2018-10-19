@@ -5,58 +5,65 @@ Login:
     Client send : ProtocolMessage , emailAddress , password 
     {
         ProtocolMessage : "LOGIN" ,
-        user : {[
-            emailAddress : "user name" ,
-            password : "password"
+        LOGIN : {[
+            emailAddress : "" ,
+            password : ""
             }]
     }
 
-    Server send : ProtocolMessage , user type , result
+    Server send : ProtocolMessage , user_type , result
     {
-        ProtocolMessage = "login"
+        ProtocolMessage = "LOGIN_RESULTS"
         user_type : "user" | "admin",
         result = "ok" | "wrong"
     }
 
 user menu :
-    Search Car :
-        Client send : ProtocolMessage ,start_date , end date , car details
+    Search Car : 
+        Client send : ProtocolMessage , start_date , end_date , vehicleType , seatsNumber
         {
-            ProtocolMessage : "search_car"
-            searchCar : {[
+            ProtocolMessage : "SEARCH_CAR"
+            SEARCH_CAR : {[
                 start_date : "01.01.2018"
                 end_date : "30.03.2018"
-                car_type : "regular"
-                car_sit : "5"
+                vehicleType : "regular"
+                seatsNumber : "5"
             ]}
         }
 
         Server send : ProtocolMessage , cars_data , result
         {
-            ProtocolMessage : search_car
-            car_data : {[
-                car_year : "2018"
-                car_model : "Nissan"
-                car_id : "34-223-08"] ,
+            ProtocolMessage : SEARCH_CAR_RESULTS
+            SEARCH_CAR_RESULTS : {[
+                vehicleID : "" ,
+                manufactureName : "" ,
+                model : "" ,
+                vehicleType : "" ,
+                manufactureYear : "" ,
+                seatsNumber : "" ,
+                engineCapacity : "" ,
+                isUsable : "" ,
+                kilometers : "" ,
+                vehicleImage : "" ] ,
                 [] , []
             }
             result : "ok" | "not cars"
         }
 
-    Order Car :
+    New Order :
         Client send : ProtocolMessage , car id , start date , end_date
         {
-            ProtocolMessage : "order_car"
-            order : {[
+            ProtocolMessage : "NEW_ORDER"
+            NEW_ORDER : {[
+                vehicleID : "" ,
                 start_date : "01.01.2018"
                 end_date : "30.03.2018"
-                car_id : "34-223-08"
             ]}
         }
 
         Server send : ProtocolMessage , order status , result
         {
-            ProtocolMessage : order_car
+            ProtocolMessage : NEW_ORDER
             order_status : True | False
             result : "ok" | "no avalibale"
             }
@@ -65,14 +72,39 @@ user menu :
     View Orders :
         Client send : ProtocolMessage
         {
-            ProtocolMessage : "view orders"
+            ProtocolMessage : "VIEW_ORDERS"
         }
 
         Server send : ProtocolMessage , order status , result
         {
-            ProtocolMessage : "view orders"
-            orders : {
-                [] ,[] ,[]
+            ProtocolMessage : "VIEW_ORDERS"
+            VIEW_ORDERS : {
+                [
+                    reservationID : "" ,
+                    user : [
+                            emailAddress : "" ,
+                            password : "" ,
+                            dateOfBirth : "" ,
+                            firstName : "" ,
+                            lastName : "" ,
+                            phoneNumber : "" ,
+                            IsAdministrator = false] ,
+                    vehicle : [
+                            vehicleID : "" ,
+                            manufactureName : "" ,
+                            model : "" ,
+                            vehicleType : "" ,
+                            manufactureYear : "" ,
+                            seatsNumber : "" ,
+                            engineCapacity : "" ,
+                            isUsable : "" ,
+                            kilometers : "" ,
+                            vehicleImage : "" ] ,
+                    reservationDate : "" ,
+                    reservationStartDate : "" ,
+                    reservationEndEnd : "" ] ,
+                    [] ,
+                    []
             }
             result : "ok" | "no avalibale"
         }
@@ -80,8 +112,8 @@ user menu :
     Change Password :
         Client send : ProtocolMessage , old ,new_password
         {
-            ProtocolMessage : "change password"
-            password : {[
+            ProtocolMessage : "USER_CHANGE_PASSWORD"
+            USER_CHANGE_PASSWORD : {[
                 old_password : "old"
                 new_password : "new_password"
             ]}
@@ -89,7 +121,7 @@ user menu :
 
         Server send : ProtocolMessage , order status , result
         {
-            ProtocolMessage : "change password"
+            ProtocolMessage : "USER_CHANGE_PASSWORD"
             result : "ok" | "error"
         }
     
