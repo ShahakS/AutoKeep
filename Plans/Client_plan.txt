@@ -13,17 +13,15 @@ Login:
 
     Server send : ProtocolMessage , user_type , result
     {
-        ProtocolMessage = "LOGIN_RESULTS"
-        user_type : "user" | "admin",
-        result = "ok" | "wrong"
+        ProtocolMessage = "OK"/"WRONG_CREDENTIAL"/"ERROR"/"TOO_MANY_AUTHENTICATION_RETRIES"
     }
 
 user menu :
     Search Car : 
         Client send : ProtocolMessage , start_date , end_date , vehicleType , seatsNumber
         {
-            ProtocolMessage : "SEARCH_CAR"
-            SEARCH_CAR : {[
+            ProtocolMessage : 	
+            SEARCH_VEHICLE: {[
                 start_date : "01.01.2018"
                 end_date : "30.03.2018"
                 vehicleType : "regular"

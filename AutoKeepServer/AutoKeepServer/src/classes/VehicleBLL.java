@@ -6,4 +6,6 @@ public class VehicleBLL {
 	public VehicleBLL() {
 		interpreter = new CommunicationInterpreter();
 	}
+	
+	
 }
