@@ -11,6 +11,7 @@ import classes.ErrorLog;
 import classes.ProtocolMessage;
 import classes.UserBLL;
 import classes.UserModel;
+import classes.VehicleModel;
 
 public class ClientHandler implements Runnable{
 	private Socket clientSocket;
@@ -26,13 +27,13 @@ public class ClientHandler implements Runnable{
 	}
 	
 	public void run() {
-		System.out.println("Connected");
-		
+		System.out.println("Connected");		
 		boolean isAuthenticated = connect();
 		
 		
 		
 		if (isAuthenticated) {
+			bll();
 //			while(true) {
 	//			try {
 	//				clientCredential = (String) readClientData.readObject();
@@ -54,7 +55,34 @@ public class ClientHandler implements Runnable{
 			sendObjToClient(errorString);
 		}
 	}
+
+	public String bll() {
+		String answer = null;
+		
+		try {
+			String incomingData = (String) readClientData();
+			
+			switch(interpreter.getProtocolMsg(incomingData)) {
+				case SEARCH_VEHICLE:
+					 VehicleModel vehicle = (VehicleModel)interpreter.decodeFromJsonToObj(ProtocolMessage.VEHICLE_MODEL, incomingData);
+					 
+					 break;
+				
+				default:
+					
+			}
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+		}
+		return answer;
+	}
 	
+	/**
+	 * Connect the user to the application with the given credentials
+	 * @return true if credential is passed else returns false
+	 */
 	private boolean connect() {
 		UserBLL userBLL = new UserBLL();
 		boolean isAuthenticated = false;
@@ -62,7 +90,7 @@ public class ClientHandler implements Runnable{
 		for(int numOfRetries = 5;!isAuthenticated && numOfRetries > 0;numOfRetries--) {
 			try {
 				String clientCredential = readClientData();
-				UserModel user = (UserModel)interpreter.decodeFromJsonToObj(clientCredential);				
+				UserModel user = (UserModel)interpreter.decodeFromJsonToObj(ProtocolMessage.USER_MODEL,clientCredential);				
 				String authResponse = userBLL.connect(user);
 				
 				if (interpreter.getProtocolMsg(authResponse).equals(ProtocolMessage.OK)) {
@@ -74,23 +102,12 @@ public class ClientHandler implements Runnable{
 				String errorMsg = ProtocolMessage.getStatus(ProtocolMessage.ERROR);
 				String errorJsonString = interpreter.encodeObjToJson(ProtocolMessage.ERROR,errorMsg);
 				sendObjToClient(errorJsonString);				
+			} catch (IOException e) {
+				//Connection closed
+				return false;
 			}
 		}
 		return isAuthenticated;
-	}
-
-	public String bll(String clientResponse) {
-		String answer = null;
-		
-		switch(interpreter.getProtocolMsg(clientResponse)) {
-			case LOGIN:
-						
-			break;
-			
-			default:
-				
-		}
-		return answer;
 	}
 	
 	/**
@@ -113,14 +130,10 @@ public class ClientHandler implements Runnable{
 	 * @throws ClassNotFoundException
 	 * @throws IOException
 	 */
-	private String readClientData() throws ClassNotFoundException {		
+	private String readClientData() throws IOException, ClassNotFoundException  {		
 		String clientData = null;
-		try {
-			clientData = (String) readClientData.readObject();
-		} catch (IOException e) {
-			//Connection closed
-			new ErrorLog("readClientData()", e.getMessage(), e.getStackTrace().toString());
-		}
+		clientData = (String) readClientData.readObject();
+
 		return clientData;			
 	}
 	

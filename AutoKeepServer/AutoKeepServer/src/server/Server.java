@@ -27,8 +27,7 @@ public class Server {
 			listeningSocket = new ServerSocket(40511);
 			
 		} catch (IOException e) {
-			ErrorLog error = new ErrorLog("Error while creating the listening socket",e.getMessage(),e.getStackTrace().toString());
-			error.writeToErrorLog();
+			new ErrorLog("Error while creating the listening socket",e.getMessage(),e.getStackTrace().toString());
 			System.exit(1);
 		}
 		
@@ -47,8 +46,7 @@ public class Server {
 		try {
 			listeningSocket.close();
 		} catch (IOException e) {
-			ErrorLog error = new ErrorLog("Error while closing the listening socket",e.getMessage(),e.getStackTrace().toString());
-			error.writeToErrorLog();
+			new ErrorLog("Error while closing the listening socket",e.getMessage(),e.getStackTrace().toString());
 		}finally {
 			threadPool.shutdown();
 		}		

@@ -24,8 +24,7 @@ public class UserBLL {
 			 Queue<String> values = new LinkedList<>();
 			 keys.add("user");
 			 values.add("{IsAdministrator:\"false\"}");
-			 authenticationAnswer = interpreter.encodeParametersToJson(protocolMessage, keys, values);			
-			//UserModel x= userDAL.getUser(user.getUserName());
+			 authenticationAnswer = interpreter.encodeParametersToJson(protocolMessage, keys, values);
 		}else {
 			 protocolMessage = ProtocolMessage.WRONG_CREDENTIAL;
 			 authenticationAnswer = interpreter.encodeObjToJson(protocolMessage,ProtocolMessage.getStatus(protocolMessage));		

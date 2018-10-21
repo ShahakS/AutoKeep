@@ -14,17 +14,9 @@ import classes.UserModel;
 public class TestClient {
 	
 	public static void main(String[] args) {
-//		try {
-//			UserModel user = new UserDAL().getUser("yuval.teltech@gmfail.com");
-//			System.out.println(user.getLastName());
-//		} catch (SQLException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
 		ObjectInputStream readClientData = null;
 		ObjectOutputStream sendClientData = null;
-//		
+		
 		try {
 			@SuppressWarnings("resource")
 			Socket clientSocket = new Socket("localhost", 40511);

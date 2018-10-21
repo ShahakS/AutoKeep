@@ -72,7 +72,7 @@ public class CommunicationInterpreter {
 				jsonObj.add("reservations", gson.toJsonTree(obj,listType));
 				return jsonObj.toString();
 				
-			case VECHILE_MODEL_LIST:		
+			case VEHICLE_MODEL_LIST:		
 				listType = new TypeToken<Queue<VehicleModel>>(){}.getType();
 				jsonObj.add("vechiles", gson.toJsonTree(obj,listType));
 				return jsonObj.toString();
@@ -98,13 +98,12 @@ public class CommunicationInterpreter {
 	 * @param jsonString - the received string to be interpreted
 	 * @return The MODEL wrapped by Object class, if protocolMsg is not recognized return null
 	 */
-	public Object decodeFromJsonToObj(String jsonString){
+	public Object decodeFromJsonToObj(ProtocolMessage protocolMsg ,String jsonString){
 			JsonObject jsonObj = (JsonObject)parser.parse(jsonString);
-			ProtocolMessage protocolMsg = gson.fromJson(jsonObj.get("protocolMsg").toString(), ProtocolMessage.class);
 			Type listType;
 			
 			switch(protocolMsg) {
-			case LOGIN:
+			case USER_MODEL:
 				UserModel user = gson.fromJson(jsonObj.get("user").toString(), UserModel.class);
 				return user;
 				
@@ -126,7 +125,7 @@ public class CommunicationInterpreter {
 				Queue<ReservationModel> reservations = gson.fromJson(jsonObj.get("reservations").toString(),listType);
 				return reservations;
 				
-			case VECHILE_MODEL_LIST:
+			case VEHICLE_MODEL_LIST:
 				listType = new TypeToken<Queue<VehicleModel>>(){}.getType();  	
 				Queue<VehicleModel> vechiles = gson.fromJson(jsonObj.get("vechiles").toString(),listType);
 				return vechiles;
