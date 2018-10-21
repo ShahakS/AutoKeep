@@ -27,10 +27,9 @@ public class ClientHandler implements Runnable{
 	
 	public void run() {
 		System.out.println("Connected");
-		ClientHandlerBLL clientHandlerBLL = new ClientHandlerBLL();
-		boolean isAuthenticated = false;
 		
-		clientHandlerBLL.connect();
+		boolean isAuthenticated = connect();
+		
 		
 		
 		if (isAuthenticated) {
@@ -53,9 +52,33 @@ public class ClientHandler implements Runnable{
 			String errorMsg = ProtocolMessage.getStatus(ProtocolMessage.TOO_MANY_AUTHENTICATION_RETRIES);
 			String errorString = interpreter.encodeObjToJson(ProtocolMessage.ERROR,errorMsg);
 			sendObjToClient(errorString);
-		}			
+		}
 	}
 	
+	private boolean connect() {
+		UserBLL userBLL = new UserBLL();
+		boolean isAuthenticated = false;
+		
+		for(int numOfRetries = 5;!isAuthenticated && numOfRetries > 0;numOfRetries--) {
+			try {
+				String clientCredential = readClientData();
+				UserModel user = (UserModel)interpreter.decodeFromJsonToObj(clientCredential);				
+				String authResponse = userBLL.connect(user);
+				
+				if (interpreter.getProtocolMsg(authResponse).equals(ProtocolMessage.OK)) {
+					isAuthenticated = true;
+				}
+				sendObjToClient(authResponse);				
+			} catch (ClassNotFoundException | SQLException e) {
+				new ErrorLog("Exception while authenticate user", e.getMessage(), e.getStackTrace().toString());
+				String errorMsg = ProtocolMessage.getStatus(ProtocolMessage.ERROR);
+				String errorJsonString = interpreter.encodeObjToJson(ProtocolMessage.ERROR,errorMsg);
+				sendObjToClient(errorJsonString);				
+			}
+		}
+		return isAuthenticated;
+	}
+
 	public String bll(String clientResponse) {
 		String answer = null;
 		
@@ -69,6 +92,36 @@ public class ClientHandler implements Runnable{
 		}
 		return answer;
 	}
-
+	
+	/**
+	 * Send a String object to Client
+	 * @param jsonString - Json represented by String
+	 */
+	private void sendObjToClient(String jsonString){
+		try {
+			sendClientData.reset();
+			sendClientData.writeObject(jsonString);
+		} catch (IOException e) {
+			//Connection closed
+			new ErrorLog("sendObjToClient()", e.getMessage(), e.getStackTrace().toString());
+		}		
+	}
+	
+	/**
+	 * Read the data sent from the current client
+	 * @return String represents the received data
+	 * @throws ClassNotFoundException
+	 * @throws IOException
+	 */
+	private String readClientData() throws ClassNotFoundException {		
+		String clientData = null;
+		try {
+			clientData = (String) readClientData.readObject();
+		} catch (IOException e) {
+			//Connection closed
+			new ErrorLog("readClientData()", e.getMessage(), e.getStackTrace().toString());
+		}
+		return clientData;			
+	}
 	
 }
