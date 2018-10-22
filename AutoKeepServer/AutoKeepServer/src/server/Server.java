@@ -24,7 +24,7 @@ public class Server {
 		ServerSocket listeningSocket = null;		
 		
 		try {
-			listeningSocket = new ServerSocket(40511);
+			listeningSocket = new ServerSocket(40501);
 			
 		} catch (IOException e) {
 			new ErrorLog("Error while creating the listening socket",e.getMessage(),e.getStackTrace().toString());

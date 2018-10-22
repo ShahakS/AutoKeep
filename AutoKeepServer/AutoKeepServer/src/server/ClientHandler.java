@@ -5,10 +5,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.sql.SQLException;
+
 import classes.CommunicationInterpreter;
 import classes.ErrorLog;
 import classes.ProtocolMessage;
-import classes.UserBLL;
+import classes.UserDAL;
 import classes.UserModel;
 
 public class ClientHandler implements Runnable{
@@ -62,18 +63,29 @@ public class ClientHandler implements Runnable{
 	 * @return true if credential is passed else returns false
 	 */
 	private boolean connect() {
-		UserBLL userBLL = new UserBLL();
+		UserDAL userDAL = new UserDAL();
 		boolean isAuthenticated = false;
+		String authResponse;
 		
 		for(int numOfRetries = 5;!isAuthenticated && numOfRetries > 0;numOfRetries--) {
 			try {
 				String clientCredential = readClientData();
-				UserModel user = (UserModel)interpreter.decodeFromJsonToObj(ProtocolMessage.USER_MODEL,clientCredential);				
-				String authResponse = userBLL.connect(user);
+				UserModel user = (UserModel)interpreter.decodeFromJsonToObj(ProtocolMessage.USER_MODEL,clientCredential);
+
+				isAuthenticated = userDAL.isUserCredentialValid(user);
+				ProtocolMessage protocolMessage;
 				
-				if (interpreter.getProtocolMsg(authResponse).equals(ProtocolMessage.OK)) {
-					isAuthenticated = true;
-				}
+				if (isAuthenticated) {
+					 protocolMessage = ProtocolMessage.OK;
+					 authResponse = interpreter.encodeObjToJson(protocolMessage, ProtocolMessage.getMessage(protocolMessage));
+					 isAuthenticated = true;
+				}else if (numOfRetries == 1) {
+					protocolMessage = ProtocolMessage.TOO_MANY_AUTHENTICATION_RETRIES;
+					authResponse = interpreter.encodeObjToJson(protocolMessage,ProtocolMessage.getMessage(protocolMessage));
+				}else{
+					 protocolMessage = ProtocolMessage.WRONG_CREDENTIAL;
+					 authResponse = interpreter.encodeObjToJson(protocolMessage,ProtocolMessage.getMessage(protocolMessage));		
+				}				
 				sendObjToClient(authResponse);				
 			} catch (ClassNotFoundException | SQLException e) {
 				new ErrorLog("Exception while authenticate user", e.getMessage(), e.getStackTrace().toString());
@@ -111,6 +123,5 @@ public class ClientHandler implements Runnable{
 	private String readClientData() throws IOException, ClassNotFoundException  {		
 		String clientData = (String) readClientData.readObject();
 		return clientData;			
-	}
-	
+	}	
 }

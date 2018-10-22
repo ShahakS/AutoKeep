@@ -24,12 +24,22 @@ public class ClientHandlerBLL {
 			case SEARCH_VEHICLE:
 				serverReply = searchVehicle(incomingData); 
 				break;
+			case NEW_ORDER:
+				serverReply = makeNewOrder(incomingData); 
+				break;
 			
 			default:
 				
 		}
 
 		return serverReply;
+	}
+
+	private String makeNewOrder(String incomingData) {
+		VehicleDAL vehicleDAL = new VehicleDAL();
+		String protocolMsg;
+		
+		return null;
 	}
 
 	private String searchVehicle(String incomingData) {

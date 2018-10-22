@@ -26,7 +26,7 @@ public class TestClient {
 		
 		try {
 			@SuppressWarnings("resource")
-			Socket clientSocket = new Socket("localhost", 40511);
+			Socket clientSocket = new Socket("localhost", 40501);
 			
 			sendClientData = new ObjectOutputStream(clientSocket.getOutputStream());
 			readClientData = new ObjectInputStream(clientSocket.getInputStream());
@@ -35,13 +35,13 @@ public class TestClient {
 			String serverAnswer;
 			int numOfRetries = 5;
 			boolean isConnected = false;
-			
+			String email = "shahak.shaked@gmail.com";
 			do{
 				Queue<String> keys = new LinkedList<>();
 				Queue<String> values = new LinkedList<>();
 				keys.add("user");
-				values.add("{emailAddress:"+"shahak.shaked@gmail.com"+",password:\"@m1234\"}");
-				
+				values.add("{emailAddress:"+email+",password:\"@m1234\"}");
+				System.out.println(values.peek());
 				String str = c.encodeParametersToJson(ProtocolMessage.LOGIN, keys, values);
 				sendClientData.writeObject(str);
 				serverAnswer = (String) readClientData.readObject();
@@ -56,19 +56,21 @@ public class TestClient {
 			if (isConnected) {
 				UserModel user = new UserModel("sad", "", "", "", "", "", true);
 				VehicleModel vehicle = new VehicleModel("1", "", "", "FAMILY", 6, 5, 1600, true, 213033, "");
-				ReservationModel r = new ReservationModel(1, user, vehicle, "2018-09-09 16:58:38.947", "2018-11-09 16:58:38.947", "2018-11-09 18:58:38.947");
-//				Queue<String> keys = new LinkedList<>();
-//				Queue<String> values = new LinkedList<>();
-//				keys.add("reservation");
-//				values.add("{reservationStartDate:"+r.getReservationStartDate()+",reservationEndDate:"+r.getReservationStartDate()+"}");
-//				System.out.println(values.peek());
-					//	",vehicle:"+vehicle+
-						//",user:"+user+"}");
+				ReservationModel r = new ReservationModel(1, user, vehicle, "2018-09-09", "2018-11-09", "2018-11-09");
+				Queue<String> keys = new LinkedList<>();
+				Queue<String> values = new LinkedList<>();
+				keys.add("reservation");
+				
+				values.add("{reservationStartDate:"+r.getReservationStartDate()
+						+",reservationEndDate:"+r.getReservationStartDate()
+						+",vehicle:{vehicleType:"+vehicle.getVehicleType()+",seatsNumber:"+vehicle.getSeatsNumber()+"}}");
+				System.out.println(values.peek());
 				//"{emailAddress:"+"shahak.shaked@gmail.com"+",password:\"@m1234\"}"
 				
-				//String search = c.encodeParametersToJson(ProtocolMessage.SEARCH_VEHICLE, keys, values);
-			String test = c.encodeObjToJson(ProtocolMessage.SEARCH_VEHICLE, r);
-					sendClientData.writeObject(test);
+				String search = c.encodeParametersToJson(ProtocolMessage.SEARCH_VEHICLE, keys, values);
+			//String test = c.encodeObjToJson(ProtocolMessage.SEARCH_VEHICLE, r);
+				System.out.println(search);
+					sendClientData.writeObject(search);
 				serverAnswer = (String) readClientData.readObject();
 				System.out.println(c.getProtocolMsg(serverAnswer));
 				Queue<VehicleModel> list =(Queue<VehicleModel>)c.decodeFromJsonToObj(c.getProtocolMsg(serverAnswer), serverAnswer);
