@@ -106,7 +106,7 @@ public class CommunicationInterpreter {
 			case USER_MODEL:
 				UserModel user = gson.fromJson(jsonObj.get("user").toString(), UserModel.class);
 				return user;
-			case SEARCH_VEHICLE:
+
 			case RESERVATION_MODEL:
 				ReservationModel reservation = gson.fromJson(jsonObj.get("reservation").toString(), ReservationModel.class);
 				return reservation;

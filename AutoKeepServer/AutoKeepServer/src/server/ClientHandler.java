@@ -26,6 +26,7 @@ public class ClientHandler implements Runnable{
 	
 	public void run() {
 		System.out.println("Connected");	
+		
 		boolean isConnected = true;
 		boolean isAuthenticated = connect();
 		

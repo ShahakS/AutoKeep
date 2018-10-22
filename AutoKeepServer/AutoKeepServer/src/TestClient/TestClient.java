@@ -57,11 +57,11 @@ public class TestClient {
 				UserModel user = new UserModel("sad", "", "", "", "", "", true);
 				VehicleModel vehicle = new VehicleModel("1", "", "", "FAMILY", 6, 5, 1600, true, 213033, "");
 				ReservationModel r = new ReservationModel(1, user, vehicle, "2018-09-09 16:58:38.947", "2018-11-09 16:58:38.947", "2018-11-09 18:58:38.947");
-				Queue<String> keys = new LinkedList<>();
-				Queue<String> values = new LinkedList<>();
-				keys.add("reservation");
-				values.add("{reservationStartDate:"+r.getReservationStartDate()+",reservationEndDate:"+r.getReservationStartDate()+"}");
-				System.out.println(values.peek());
+//				Queue<String> keys = new LinkedList<>();
+//				Queue<String> values = new LinkedList<>();
+//				keys.add("reservation");
+//				values.add("{reservationStartDate:"+r.getReservationStartDate()+",reservationEndDate:"+r.getReservationStartDate()+"}");
+//				System.out.println(values.peek());
 					//	",vehicle:"+vehicle+
 						//",user:"+user+"}");
 				//"{emailAddress:"+"shahak.shaked@gmail.com"+",password:\"@m1234\"}"
@@ -71,7 +71,9 @@ public class TestClient {
 					sendClientData.writeObject(test);
 				serverAnswer = (String) readClientData.readObject();
 				System.out.println(c.getProtocolMsg(serverAnswer));
-				
+				Queue<VehicleModel> list =(Queue<VehicleModel>)c.decodeFromJsonToObj(c.getProtocolMsg(serverAnswer), serverAnswer);
+				while(!list.isEmpty())
+					System.out.println(list.poll().getPlateNumber());
 			}
 			
 			
