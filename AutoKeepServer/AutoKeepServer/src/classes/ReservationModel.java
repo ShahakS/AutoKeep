@@ -6,17 +6,17 @@ public class ReservationModel {
 	private VehicleModel vehicle;
 	private String reservationDate;
 	private String reservationStartDate;
-	private String reservationEndEnd;
+	private String reservationEndDate;
 	
 	public ReservationModel(int reservationID, UserModel user, VehicleModel vehicle, String reservationDate,
-			String reservationStartDate, String reservationEndEnd) {
+			String reservationStartDate, String reservationEndDate) {
 		super();
 		this.reservationID = reservationID;
 		this.user = user;
 		this.vehicle = vehicle;
 		this.reservationDate = reservationDate;
 		this.reservationStartDate = reservationStartDate;
-		this.reservationEndEnd = reservationEndEnd;
+		this.reservationEndDate = reservationEndDate;
 	}
 
 	public int getReservationID() {
@@ -59,11 +59,11 @@ public class ReservationModel {
 		this.reservationStartDate = reservationStartDate;
 	}
 
-	public String getReservationEndEnd() {
-		return reservationEndEnd;
+	public String getReservationEndDate() {
+		return reservationEndDate;
 	}
 
-	public void setReservationEndEnd(String reservationEndEnd) {
-		this.reservationEndEnd = reservationEndEnd;
+	public void setReservationEndDate(String reservationEndDate) {
+		this.reservationEndDate = reservationEndDate;
 	}
 }

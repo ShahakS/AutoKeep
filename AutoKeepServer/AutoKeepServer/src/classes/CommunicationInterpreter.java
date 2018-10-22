@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.internal.bind.SqlDateTypeAdapter;
 import com.google.gson.reflect.TypeToken;
 
 
@@ -16,7 +17,11 @@ public class CommunicationInterpreter {
 	
 	public CommunicationInterpreter() {
 		super();
-		this.gson = new GsonBuilder().create();
+		SqlDateTypeAdapter sqlAdapter = new SqlDateTypeAdapter();
+		this.gson = new GsonBuilder()
+				   .registerTypeAdapter(java.sql.Date.class, sqlAdapter)
+				   .setDateFormat("yyyy-MM-dd")
+				   .create();//new GsonBuilder().create();
 		this.parser = new JsonParser();
 	}
 	
@@ -53,7 +58,7 @@ public class CommunicationInterpreter {
 			case USER_MODEL:
 				jsonObj.add("user", gson.toJsonTree((UserModel)obj,UserModel.class));
 				return jsonObj.toString();
-				
+			case SEARCH_VEHICLE:
 			case RESERVATION_MODEL:
 				jsonObj.add("reservation", gson.toJsonTree((ReservationModel)obj,ReservationModel.class));
 				return jsonObj.toString();
@@ -76,15 +81,10 @@ public class CommunicationInterpreter {
 				listType = new TypeToken<Queue<VehicleModel>>(){}.getType();
 				jsonObj.add("vechiles", gson.toJsonTree(obj,listType));
 				return jsonObj.toString();
-			
-			case OK:
-			case WRONG_CREDENTIAL:
-			case ERROR:
-				jsonObj.add("message", gson.toJsonTree((String)obj,String.class));				
-				return jsonObj.toString();
 				
 			default:
-				return null;
+				jsonObj.add("message", gson.toJsonTree((String)obj,String.class));				
+				return jsonObj.toString();
 			}
 		}catch(ClassCastException e) {
 			ErrorLog error = new ErrorLog("Mismatched obj and protocolMsg - couldn't cast",e.getMessage(),e.getStackTrace().toString());
@@ -106,7 +106,7 @@ public class CommunicationInterpreter {
 			case USER_MODEL:
 				UserModel user = gson.fromJson(jsonObj.get("user").toString(), UserModel.class);
 				return user;
-				
+			case SEARCH_VEHICLE:
 			case RESERVATION_MODEL:
 				ReservationModel reservation = gson.fromJson(jsonObj.get("reservation").toString(), ReservationModel.class);
 				return reservation;
@@ -131,16 +131,18 @@ public class CommunicationInterpreter {
 				return vechiles;
 				
 			default:
-				return null;
+				listType = new TypeToken<String>(){}.getType();  	
+				String message = gson.fromJson(jsonObj.get("message").toString(),listType);
+				return message;
 			}
 	}
 	
 	/**
-	 * 
+	 * The method get parameters and build a json string out of it
 	 * @param protocolMsg
 	 * @param keys
 	 * @param values
-	 * @return
+	 * @return json String
 	 */
 	public String encodeParametersToJson(ProtocolMessage protocolMsg,Queue<String> keys,Queue<String> values) {
 		JsonObject jsonObj = new JsonObject();

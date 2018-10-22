@@ -5,6 +5,7 @@ public enum ProtocolMessage {
 	WRONG_CREDENTIAL,
 	LOGIN,
 	SEARCH_VEHICLE,
+	NO_AVAILABLE_VEHICLES,
 	
 	USER_MODEL,
 	RESERVATION_MODEL,
@@ -17,7 +18,7 @@ public enum ProtocolMessage {
 	TOO_MANY_AUTHENTICATION_RETRIES,	
 	INTERNAL_ERROR;
 
-	public static String getStatus(ProtocolMessage protocolMessage) {
+	public static String getMessage(ProtocolMessage protocolMessage) {
 		String messageString;
 	
 		switch (protocolMessage) {
@@ -33,12 +34,16 @@ public enum ProtocolMessage {
 				messageString = "You have been tried to connect 5 times.\nPlease Try again later";
 				break;
 				
+			case NO_AVAILABLE_VEHICLES:
+				messageString = "There is no available vehicles for correct parameters";
+				break;
+				
 			case INTERNAL_ERROR:
 				messageString = "Internal error.\nPlease contact suppport";
 				break;
 				
 			default:
-				messageString = "";
+				messageString = "Protocol Message case is not defined";
 		}		
 		return messageString;
 	}

@@ -12,13 +12,13 @@ import server.DatabaseConnector;
 
 public class ErrorLog{
 	private String errorTimeStamp;
+	private String customMeassage;
 	private String errorMessage;
-	private String errorDetails;
 	private String stackTrace;
 	
-	public ErrorLog(String errorMeassage,String errorDetails,String stackTrace) {
-		this.errorMessage = errorMeassage;
-		this.errorDetails = errorDetails;
+	public ErrorLog(String customMeassage,String errorMessage,String stackTrace) {
+		this.customMeassage = customMeassage;
+		this.errorMessage = errorMessage;
 		this.stackTrace = stackTrace;
 		this.errorTimeStamp = new Timestamp(System.currentTimeMillis()).toString();
 		writeToErrorLog();
@@ -30,8 +30,8 @@ public class ErrorLog{
 		Queue<Object> parameters = new LinkedList<>();
 		
 		parameters.add(errorTimeStamp);
+		parameters.add(customMeassage);
 		parameters.add(errorMessage);
-		parameters.add(errorDetails);
 		parameters.add(stackTrace);
 		
 		try {

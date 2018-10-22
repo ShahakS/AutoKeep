@@ -1,7 +1,7 @@
 package classes;
 
 public class VehicleModel {
-	private int vehicleID;
+	private String plateNumber;
 	private String manufactureName;
 	private String model;
 	private String vehicleType;
@@ -12,10 +12,10 @@ public class VehicleModel {
 	private int kilometers;
 	private String vehicleImage;
 	
-	public VehicleModel(int vehicleID, String manufactureName, String model, String vehicleType, int manufactureYear,
+	public VehicleModel(String plateNumber, String manufactureName, String model, String vehicleType, int manufactureYear,
 			int seatsNumber, int engineCapacity, boolean isUsable, int kilometers, String vehicleImage) {
 		super();
-		this.vehicleID = vehicleID;
+		this.plateNumber = plateNumber;
 		this.manufactureName = manufactureName;
 		this.model = model;
 		this.vehicleType = vehicleType;
@@ -27,12 +27,12 @@ public class VehicleModel {
 		this.vehicleImage = vehicleImage;
 	}
 
-	public int getVehicleID() {
-		return vehicleID;
+	public String getPlateNumber() {
+		return plateNumber;
 	}
 
-	public void setVehicleID(int vehicleID) {
-		this.vehicleID = vehicleID;
+	public void setPlateNumber(String plateNumber) {
+		this.plateNumber = plateNumber;
 	}
 
 	public String getManufactureName() {

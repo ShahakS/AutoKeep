@@ -27,7 +27,7 @@ public class UserBLL {
 			 authenticationAnswer = interpreter.encodeParametersToJson(protocolMessage, keys, values);
 		}else {
 			 protocolMessage = ProtocolMessage.WRONG_CREDENTIAL;
-			 authenticationAnswer = interpreter.encodeObjToJson(protocolMessage,ProtocolMessage.getStatus(protocolMessage));		
+			 authenticationAnswer = interpreter.encodeObjToJson(protocolMessage,ProtocolMessage.getMessage(protocolMessage));		
 		}
 		return authenticationAnswer;
 	}
