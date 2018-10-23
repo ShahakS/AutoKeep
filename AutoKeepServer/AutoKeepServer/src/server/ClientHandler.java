@@ -9,6 +9,8 @@ import java.sql.SQLException;
 import classes.CommunicationInterpreter;
 import classes.ErrorLog;
 import classes.ProtocolMessage;
+import classes.SessionDAL;
+import classes.SessionModel;
 import classes.UserDAL;
 import classes.UserModel;
 
@@ -17,6 +19,8 @@ public class ClientHandler implements Runnable{
 	private CommunicationInterpreter interpreter;
 	private ObjectInputStream readClientData;
 	private ObjectOutputStream sendClientData;
+	private UserModel user;
+	private SessionModel currentSession;
 	
 	public ClientHandler(Socket socket) throws IOException{
 		this.clientSocket = socket;
@@ -37,11 +41,10 @@ public class ClientHandler implements Runnable{
 			while(isConnected) {
 				try {
 					String incomingData = (String) readClientData.readObject();
-					String OutgoingData = clientHandlerBLL.bll(incomingData);
+					String OutgoingData = clientHandlerBLL.bll(incomingData);					
 					sendObjToClient(OutgoingData);
 					
 				}catch (IOException e) {
-					new ErrorLog("Exception Thrown by ClientHandler while reading client's data", e.getMessage(), e.getStackTrace().toString());
 					isConnected = false;
 				}catch (ClassNotFoundException e) {
 					new ErrorLog("Exception Thrown by ClientHandler while casting", e.getMessage(), e.getStackTrace().toString());
@@ -50,12 +53,21 @@ public class ClientHandler implements Runnable{
 					sendObjToClient(errorJsonString);	
 				}
 			}
+			disconnect();
 		}else{
 			String errorMsg = ProtocolMessage.getMessage(ProtocolMessage.TOO_MANY_AUTHENTICATION_RETRIES);
 			String errorString = interpreter.encodeObjToJson(ProtocolMessage.ERROR,errorMsg);
 			sendObjToClient(errorString);
 		}
 		System.out.println("Disconnected");
+	}
+
+	private void disconnect() {
+		try {
+			new SessionDAL().closeCorrectSession(currentSession.getSessionID());
+		} catch (SQLException e) {
+			new ErrorLog("Exception while trying to disconnect.Thrown by disconnect()", e.getMessage(), e.getStackTrace().toString());
+		}		
 	}
 
 	/**
@@ -70,15 +82,16 @@ public class ClientHandler implements Runnable{
 		for(int numOfRetries = 5;!isAuthenticated && numOfRetries > 0;numOfRetries--) {
 			try {
 				String clientCredential = readClientData();
-				UserModel user = (UserModel)interpreter.decodeFromJsonToObj(ProtocolMessage.USER_MODEL,clientCredential);
+				user = (UserModel)interpreter.decodeFromJsonToObj(ProtocolMessage.USER_MODEL,clientCredential);
 
 				isAuthenticated = userDAL.isUserCredentialValid(user);
 				ProtocolMessage protocolMessage;
 				
 				if (isAuthenticated) {
-					 protocolMessage = ProtocolMessage.OK;
-					 authResponse = interpreter.encodeObjToJson(protocolMessage, ProtocolMessage.getMessage(protocolMessage));
-					 isAuthenticated = true;
+					currentSession = new SessionDAL().initializeNewSession(user.getEmailAddress());
+					protocolMessage = ProtocolMessage.OK;
+					authResponse = interpreter.encodeObjToJson(protocolMessage, ProtocolMessage.getMessage(protocolMessage));
+					isAuthenticated = true;
 				}else if (numOfRetries == 1) {
 					protocolMessage = ProtocolMessage.TOO_MANY_AUTHENTICATION_RETRIES;
 					authResponse = interpreter.encodeObjToJson(protocolMessage,ProtocolMessage.getMessage(protocolMessage));

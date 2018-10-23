@@ -7,7 +7,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.internal.bind.SqlDateTypeAdapter;
 import com.google.gson.reflect.TypeToken;
 
 
@@ -17,11 +16,7 @@ public class CommunicationInterpreter {
 	
 	public CommunicationInterpreter() {
 		super();
-		SqlDateTypeAdapter sqlAdapter = new SqlDateTypeAdapter();
-		this.gson = new GsonBuilder()
-				   .registerTypeAdapter(java.sql.Date.class, sqlAdapter)
-				   .setDateFormat("yyyy-MM-dd")
-				   .create();//new GsonBuilder().create();
+		this.gson = new GsonBuilder().create();
 		this.parser = new JsonParser();
 	}
 	
@@ -94,9 +89,9 @@ public class CommunicationInterpreter {
 	}	
 	
 	/**
-	 * The method interpret the string and returns the MODEL object
+	 * The method interpret the json string and returns a MODEL or String object
 	 * @param jsonString - the received string to be interpreted
-	 * @return The MODEL wrapped by Object class, if protocolMsg is not recognized return null
+	 * @return a MODEL or String wrapped by Object class
 	 */
 	public Object decodeFromJsonToObj(ProtocolMessage protocolMsg ,String jsonString){
 			JsonObject jsonObj = (JsonObject)parser.parse(jsonString);

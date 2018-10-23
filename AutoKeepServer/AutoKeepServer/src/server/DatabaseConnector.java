@@ -58,7 +58,7 @@ public class DatabaseConnector {
 		}
 	}
 	
-public synchronized ResultSet executeSqlStatementDataTable(String query,Queue<Object> parameters) throws SQLException{
+	public synchronized ResultSet executeSqlStatementDataTable(String query,Queue<Object> parameters) throws SQLException{
 		ResultSet resultSet = null;
 		
 		try {
@@ -97,13 +97,13 @@ public synchronized ResultSet executeSqlStatementDataTable(String query,Queue<Ob
 		return statement;
 	}
 	
-	public synchronized boolean callRoutineReturnedScalarValue(String query,Queue<Object> parameters) throws SQLException{
+	public synchronized int callRoutineReturnedScalarValue(String query,Queue<Object> parameters) throws SQLException{
 		int parameterNum = 1;
-		boolean returnedValue = false;
+		int returnedValue = -1;
 		
 		try {
 			CallableStatement statement = DBConnection.prepareCall(query);
-			statement.registerOutParameter(parameterNum, java.sql.Types.BOOLEAN);
+			statement.registerOutParameter(parameterNum, java.sql.Types.INTEGER);
 			
 			for(parameterNum++;!parameters.isEmpty();parameterNum++)
 			{
@@ -119,7 +119,7 @@ public synchronized ResultSet executeSqlStatementDataTable(String query,Queue<Ob
 				}
 			}
 			statement.execute();
-			returnedValue = statement.getBoolean(1);	
+			returnedValue = statement.getInt(1);	
 		} catch (SQLException e) {
 			ErrorLog error = new ErrorLog("Error Calling Stored Procedure from callSpWithSingleValue with statement: "+query ,e.getMessage(),e.getStackTrace().toString());
 			error.writeToErrorLog();

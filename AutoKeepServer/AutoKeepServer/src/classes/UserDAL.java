@@ -20,11 +20,14 @@ public class UserDAL {
 		public boolean isUserCredentialValid(UserModel user) throws SQLException {
 			String query = "{?= call fn_IsUserExist(?, ?)}";
 			Queue<Object> parameters = new LinkedList<>();
-			boolean isUserCredentialValid;
+			boolean isUserCredentialValid = false;
 
 			parameters.add(user.getEmailAddress());
 			parameters.add(user.getPassword());
-			isUserCredentialValid = DBconnector.callRoutineReturnedScalarValue(query, parameters);
+			int returnedValue = DBconnector.callRoutineReturnedScalarValue(query, parameters);
+			
+			if (returnedValue != 0)
+				isUserCredentialValid = true;
 			
 			return isUserCredentialValid;
 		}

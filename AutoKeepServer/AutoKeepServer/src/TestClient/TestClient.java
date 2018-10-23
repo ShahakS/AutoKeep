@@ -7,15 +7,10 @@ import java.net.Socket;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.internal.bind.SqlDateTypeAdapter;
-
 import classes.CommunicationInterpreter;
 import classes.ProtocolMessage;
 import classes.ReservationModel;
 import classes.UserModel;
-import classes.VehicleBLL;
 import classes.VehicleModel;
 //test
 public class TestClient {
@@ -41,7 +36,6 @@ public class TestClient {
 				Queue<String> values = new LinkedList<>();
 				keys.add("user");
 				values.add("{emailAddress:"+email+",password:\"@m1234\"}");
-				System.out.println(values.peek());
 				String str = c.encodeParametersToJson(ProtocolMessage.LOGIN, keys, values);
 				sendClientData.writeObject(str);
 				serverAnswer = (String) readClientData.readObject();
@@ -60,19 +54,13 @@ public class TestClient {
 				Queue<String> keys = new LinkedList<>();
 				Queue<String> values = new LinkedList<>();
 				keys.add("reservation");
-				
 				values.add("{reservationStartDate:"+r.getReservationStartDate()
 						+",reservationEndDate:"+r.getReservationStartDate()
-						+",vehicle:{vehicleType:"+vehicle.getVehicleType()+",seatsNumber:"+vehicle.getSeatsNumber()+"}}");
-				System.out.println(values.peek());
-				//"{emailAddress:"+"shahak.shaked@gmail.com"+",password:\"@m1234\"}"
-				
+						+",vehicle:{vehicleType:"+vehicle.getVehicleType()+",seatsNumber:"+vehicle.getSeatsNumber()+"}}");				
 				String search = c.encodeParametersToJson(ProtocolMessage.SEARCH_VEHICLE, keys, values);
-			//String test = c.encodeObjToJson(ProtocolMessage.SEARCH_VEHICLE, r);
-				System.out.println(search);
-					sendClientData.writeObject(search);
+
+				sendClientData.writeObject(search);
 				serverAnswer = (String) readClientData.readObject();
-				System.out.println(c.getProtocolMsg(serverAnswer));
 				Queue<VehicleModel> list =(Queue<VehicleModel>)c.decodeFromJsonToObj(c.getProtocolMsg(serverAnswer), serverAnswer);
 				while(!list.isEmpty())
 					System.out.println(list.poll().getPlateNumber());
