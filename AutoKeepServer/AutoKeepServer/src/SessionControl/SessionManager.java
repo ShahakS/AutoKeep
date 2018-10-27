@@ -126,7 +126,7 @@ public class SessionManager {
 	 * Return the client's session model from the list
 	 * @param emailAddress the user email
 	 * @param clientIpAddress the client's ip address
-	 * @return the client's session
+	 * @return the client's session else return null
 	 */
 	private synchronized SessionModel getSessionModel(String emailAddress,String clientIpAddress) {
 		SessionModel sessionModel = null;
@@ -179,17 +179,19 @@ public class SessionManager {
 		String clientIpAddress = extractIpFromSocket(clientSocket);
 		boolean isBlocked = blockedIps.containsKey(clientIpAddress);
 		
-		if (!isBlocked) {
+		if (!isBlocked && emailAddress != null) {
 			SessionModel sessionModel = getSessionModel(emailAddress,clientIpAddress);
-			String connectionTime = sessionModel.getConnectionTime();
-			String disconnectionTime = getCurrentTime();
-			 
-			try {
-				new SessionDAL().addSessionToDB(emailAddress,connectionTime,disconnectionTime, clientIpAddress);
-			} catch (SQLException e) {
-				new ExcaptionHandler("Exception while trying to disconnect.Thrown by closeSession()", e.getMessage(), e.getStackTrace().toString());
-			}
-			removeSessionModel(sessionModel);
+			if (sessionModel != null) {
+				String connectionTime = sessionModel.getConnectionTime();
+				String disconnectionTime = getCurrentTime();
+				 
+				try {
+					new SessionDAL().addSessionToDB(emailAddress,connectionTime,disconnectionTime, clientIpAddress);
+				} catch (SQLException e) {
+					new ExcaptionHandler("Exception while trying to disconnect.Thrown by closeSession()", e.getMessage(), e.getStackTrace().toString());
+				}
+				removeSessionModel(sessionModel);
+			}			
 		}		
 	}
 }

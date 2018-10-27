@@ -6,6 +6,8 @@ import java.util.Queue;
 import ClientServerProtocols.ProtocolMessage;
 import CommunicationManager.CommunicationInterpreter;
 import ReservationControl.ReservationModel;
+import UserControl.UserBLL;
+import UserControl.UserModel;
 import VehicleControl.VehicleDAL;
 import VehicleControl.VehicleModel;
 import exceptionsPackage.ExcaptionHandler;
@@ -27,6 +29,9 @@ public class ClientHandlerBLL {
 			case NEW_ORDER:
 				serverReply = makeNewOrder(incomingData); 
 				break;
+			case USER_CHANGE_PASSWORD:
+				serverReply= changePassword(incomingData);
+				break;
 			
 			default:
 				
@@ -35,11 +40,21 @@ public class ClientHandlerBLL {
 		return serverReply;
 	}
 
-	private String makeNewOrder(String incomingData) {
-		VehicleDAL vehicleDAL = new VehicleDAL();
-		String protocolMsg;
+	private String changePassword(String incomingData) {
+		UserBLL userBLL = new UserBLL();
+		String outgoingData,message;
 		
-		return null;
+		try {
+			UserModel user = (UserModel)interpreter.decodeFromJsonToObj(ProtocolMessage.USER_MODEL, incomingData);
+			userBLL.changePassword(user);
+			ProtocolMessage protocolMsg = ProtocolMessage.PASSWORD_CHANGED_SUCCESSFULLY;
+			message = ProtocolMessage.getMessage(protocolMsg);
+			outgoingData = interpreter.encodeObjToJson(protocolMsg, message);
+		} catch (SQLException e) {
+			message = ProtocolMessage.getMessage(ProtocolMessage.CHANGING_PASSWORD_FAILED);
+			outgoingData = interpreter.encodeObjToJson(ProtocolMessage.ERROR,message);
+		}
+		return outgoingData;
 	}
 
 	private String searchVehicle(String incomingData) {
@@ -69,5 +84,12 @@ public class ClientHandlerBLL {
 			protocolMsg = interpreter.encodeObjToJson(ProtocolMessage.ERROR,message);
 		}	
 		return protocolMsg;
+	}
+	
+	private String makeNewOrder(String incomingData) {
+		VehicleDAL vehicleDAL = new VehicleDAL();
+		String protocolMsg;
+		
+		return null;
 	}
 }

@@ -21,7 +21,7 @@ public class TestClient {
 		
 		try {
 
-			Socket clientSocket = new Socket("localhost", 40501);
+			Socket clientSocket = new Socket("shahak18.ddns.net", 40501);
 			
 			sendClientData = new ObjectOutputStream(clientSocket.getOutputStream());
 			readClientData = new ObjectInputStream(clientSocket.getInputStream());
@@ -30,7 +30,7 @@ public class TestClient {
 			String serverAnswer;
 			int numOfRetries = 5;
 			boolean isConnected = false;
-			String email = "shahak.shaked@gmail.com1";
+			String email = "shahak.shaked@gmail.com";
 			do{
 				Queue<String> keys = new LinkedList<>();
 				Queue<String> values = new LinkedList<>();
@@ -49,7 +49,7 @@ public class TestClient {
 				}else if(c.getProtocolMsg(serverAnswer) == ProtocolMessage.TOO_MANY_AUTHENTICATION_RETRIES) {
 					System.out.println(c.decodeFromJsonToObj(ProtocolMessage.TOO_MANY_AUTHENTICATION_RETRIES, serverAnswer));
 				}
-				System.out.println(c.getProtocolMsg(serverAnswer));
+				
 				numOfRetries--;
 			}while((!(c.getProtocolMsg(serverAnswer)).equals(ProtocolMessage.OK)) && numOfRetries>0);
 			
@@ -71,6 +71,8 @@ public class TestClient {
 				Queue<VehicleModel> list =(Queue<VehicleModel>)c.decodeFromJsonToObj(c.getProtocolMsg(serverAnswer), serverAnswer);
 				while(!list.isEmpty())
 					System.out.println(list.poll().getPlateNumber());
+				
+				
 			}
 			Thread.currentThread().sleep(2000);
 			clientSocket.close();

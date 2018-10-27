@@ -74,4 +74,13 @@ public class UserDAL {
 					
 			return user;
 		}
+
+		public void changePassword(String emailAddress, String password) throws SQLException {
+			String query = "{call sp_UpdateUserPassword(?,?)}";
+			Queue<Object> parameters = new LinkedList<>();
+
+			parameters.add(emailAddress);
+			parameters.add(password);
+			DBconnector.executeSqlStatement(query, parameters);			
+		}
 }

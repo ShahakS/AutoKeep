@@ -12,6 +12,8 @@ public enum ProtocolMessage {
 	NEW_ORDER,
 	VIEW_ORDERS,
 	USER_CHANGE_PASSWORD,
+	PASSWORD_CHANGED_SUCCESSFULLY,
+	CHANGING_PASSWORD_FAILED,
 	USER_MODEL,
 	RESERVATION_MODEL,
 	VEHICLE_MODEL,
@@ -45,13 +47,22 @@ public enum ProtocolMessage {
 				break;
 				
 			case INTERNAL_ERROR:
-				messageString = "Internal error.\nPlease contact suppport";
+				messageString = "Internal error.\nPlease contact system suppport";
 				break;
 				
 			case USER_IS_BANNED:
 				messageString = "You have been banned due to a large number of login attempts\n"
 								+ "Please try again in " +customMessage[0]+ " seconds";
 				break;
+				
+			case PASSWORD_CHANGED_SUCCESSFULLY:
+				messageString = "Password has been changed successfully";
+				break;
+				
+			case CHANGING_PASSWORD_FAILED:
+				messageString = "Could not change password\nPlease contact system support";
+				break;
+				
 			default:
 				messageString = "Protocol Message case is not defined";
 		}		
