@@ -1,4 +1,4 @@
-package classes;
+package exceptionsPackage;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -10,13 +10,13 @@ import java.util.Queue;
 
 import server.DatabaseConnector;
 
-public class ErrorLog{
+public class ExcaptionHandler{
 	private String errorTimeStamp;
 	private String customMeassage;
 	private String errorMessage;
 	private String stackTrace;
 	
-	public ErrorLog(String customMeassage,String errorMessage,String stackTrace) {
+	public ExcaptionHandler(String customMeassage,String errorMessage,String stackTrace) {
 		this.customMeassage = customMeassage;
 		this.errorMessage = errorMessage;
 		this.stackTrace = stackTrace;

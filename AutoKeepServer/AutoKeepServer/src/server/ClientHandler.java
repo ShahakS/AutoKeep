@@ -6,12 +6,12 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.sql.SQLException;
 
-import classes.CommunicationInterpreter;
-import classes.ErrorLog;
-import classes.ProtocolMessage;
-import classes.SessionManager;
-import classes.UserDAL;
-import classes.UserModel;
+import ClientServerProtocols.ProtocolMessage;
+import CommunicationManager.CommunicationInterpreter;
+import SessionControl.SessionManager;
+import UserControl.UserDAL;
+import UserControl.UserModel;
+import exceptionsPackage.ExcaptionHandler;
 
 public class ClientHandler implements Runnable{
 	private Socket clientSocket;
@@ -48,7 +48,7 @@ public class ClientHandler implements Runnable{
 				}catch (IOException e) {
 					isConnected = false;
 				}catch (ClassNotFoundException e) {
-					new ErrorLog("Exception Thrown by ClientHandler while casting", e.getMessage(), e.getStackTrace().toString());
+					new ExcaptionHandler("Exception Thrown by ClientHandler while casting", e.getMessage(), e.getStackTrace().toString());
 					String errorMsg = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);
 					String errorJsonString = interpreter.encodeObjToJson(ProtocolMessage.ERROR,errorMsg);
 					sendObjToClient(errorJsonString);	
@@ -103,7 +103,7 @@ public class ClientHandler implements Runnable{
 				}				
 				sendObjToClient(authResponse);				
 			} catch (ClassNotFoundException | SQLException e) {
-				new ErrorLog("Exception while authenticate user", e.getMessage(), e.getStackTrace().toString());
+				new ExcaptionHandler("Exception while authenticate user", e.getMessage(), e.getStackTrace().toString());
 				String errorMsg = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);
 				String errorJsonString = interpreter.encodeObjToJson(ProtocolMessage.ERROR,errorMsg);
 				sendObjToClient(errorJsonString);				
@@ -125,7 +125,7 @@ public class ClientHandler implements Runnable{
 			sendClientData.writeObject(outgoingString);
 		} catch (IOException e) {
 			//Connection closed
-			new ErrorLog("sendObjToClient()", e.getMessage(), e.getStackTrace().toString());
+			new ExcaptionHandler("sendObjToClient()", e.getMessage(), e.getStackTrace().toString());
 		}		
 	}
 	

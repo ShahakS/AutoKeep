@@ -1,7 +1,9 @@
-package classes;
+package VehicleControl;
 
 import java.sql.SQLException;
 import java.util.Queue;
+
+import CommunicationManager.CommunicationInterpreter;
 
 public class VehicleBLL {
 	private CommunicationInterpreter interpreter;

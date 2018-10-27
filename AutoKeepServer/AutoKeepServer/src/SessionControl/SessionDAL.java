@@ -1,4 +1,4 @@
-package classes;
+package SessionControl;
 
 import java.sql.SQLException;
 import java.util.LinkedList;

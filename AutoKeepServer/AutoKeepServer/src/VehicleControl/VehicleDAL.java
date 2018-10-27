@@ -1,4 +1,4 @@
-package classes;
+package VehicleControl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

@@ -1,4 +1,6 @@
-package classes;
+package ClientServerProtocols;
+
+import SessionControl.SessionManager;
 
 public enum ProtocolMessage {
 	OK,

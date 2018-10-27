@@ -1,4 +1,4 @@
-package classes;
+package CommunicationManager;
 
 import java.lang.reflect.Type;
 import java.util.Queue;
@@ -8,6 +8,12 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
+
+import ClientServerProtocols.ProtocolMessage;
+import ReservationControl.ReservationModel;
+import UserControl.UserModel;
+import VehicleControl.VehicleModel;
+import exceptionsPackage.ExcaptionHandler;
 
 
 public class CommunicationInterpreter {
@@ -82,7 +88,7 @@ public class CommunicationInterpreter {
 				return jsonObj.toString();
 			}
 		}catch(ClassCastException e) {
-			ErrorLog error = new ErrorLog("Mismatched obj and protocolMsg - couldn't cast",e.getMessage(),e.getStackTrace().toString());
+			ExcaptionHandler error = new ExcaptionHandler("Mismatched obj and protocolMsg - couldn't cast",e.getMessage(),e.getStackTrace().toString());
 			error.writeToErrorLog();
 			throw e;
 		}		

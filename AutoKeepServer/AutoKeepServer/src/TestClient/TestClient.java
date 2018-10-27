@@ -7,11 +7,11 @@ import java.net.Socket;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import classes.CommunicationInterpreter;
-import classes.ProtocolMessage;
-import classes.ReservationModel;
-import classes.UserModel;
-import classes.VehicleModel;
+import ClientServerProtocols.ProtocolMessage;
+import CommunicationManager.CommunicationInterpreter;
+import ReservationControl.ReservationModel;
+import UserControl.UserModel;
+import VehicleControl.VehicleModel;
 //test
 public class TestClient {
 	

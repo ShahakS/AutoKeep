@@ -1,4 +1,4 @@
-package classes;
+package SessionControl;
 
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -12,6 +12,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
+
+import exceptionsPackage.ExcaptionHandler;
 
 public class SessionManager {
 	private static SessionManager sessionManager = new SessionManager();
@@ -79,7 +81,7 @@ public class SessionManager {
 			milliseconds = currentTimeDate.getTime() - bannedTimeDate.getTime();
 			timeDifference = TimeUnit.MILLISECONDS.toSeconds(milliseconds);
 		} catch (ParseException e) {
-			new ErrorLog("Cannot parse String.Thrown By getTimeDifference()", e.getMessage(), e.getStackTrace().toString());
+			new ExcaptionHandler("Cannot parse String.Thrown By getTimeDifference()", e.getMessage(), e.getStackTrace().toString());
 		}	
 		
 		return timeDifference;
@@ -185,7 +187,7 @@ public class SessionManager {
 			try {
 				new SessionDAL().addSessionToDB(emailAddress,connectionTime,disconnectionTime, clientIpAddress);
 			} catch (SQLException e) {
-				new ErrorLog("Exception while trying to disconnect.Thrown by closeSession()", e.getMessage(), e.getStackTrace().toString());
+				new ExcaptionHandler("Exception while trying to disconnect.Thrown by closeSession()", e.getMessage(), e.getStackTrace().toString());
 			}
 			removeSessionModel(sessionModel);
 		}		

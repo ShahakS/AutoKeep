@@ -1,4 +1,4 @@
-package classes;
+package VehicleControl;
 
 public class VehicleModel {
 	private String plateNumber;

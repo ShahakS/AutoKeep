@@ -6,7 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Queue;
-import classes.ErrorLog;
+
+import exceptionsPackage.ExcaptionHandler;
 
 public class DatabaseConnector {
 	private static DatabaseConnector DBConnector = new DatabaseConnector();
@@ -121,7 +122,7 @@ public class DatabaseConnector {
 			statement.execute();
 			returnedValue = statement.getInt(1);	
 		} catch (SQLException e) {
-			ErrorLog error = new ErrorLog("Error Calling Stored Procedure from callSpWithSingleValue with statement: "+query ,e.getMessage(),e.getStackTrace().toString());
+			ExcaptionHandler error = new ExcaptionHandler("Error Calling Stored Procedure from callSpWithSingleValue with statement: "+query ,e.getMessage(),e.getStackTrace().toString());
 			error.writeToErrorLog();
 			throw e;
 		}

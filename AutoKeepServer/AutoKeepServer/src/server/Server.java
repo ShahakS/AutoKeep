@@ -6,7 +6,7 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import classes.ErrorLog;
+import exceptionsPackage.ExcaptionHandler;
 
 public class Server {
 	private final int THREAD_NUMBER = 20;
@@ -27,7 +27,7 @@ public class Server {
 			listeningSocket = new ServerSocket(40501);
 			
 		} catch (IOException e) {
-			new ErrorLog("Error while creating the listening socket",e.getMessage(),e.getStackTrace().toString());
+			new ExcaptionHandler("Error while creating the listening socket",e.getMessage(),e.getStackTrace().toString());
 			System.exit(1);
 		}
 		
@@ -38,7 +38,7 @@ public class Server {
 				clientSocket = listeningSocket.accept();
 				threadPool.execute(new ClientHandler(clientSocket));
 			} catch (IOException e) {
-				new ErrorLog("Error accepting a new client connection - Server.java",e.getMessage(),e.getStackTrace().toString());
+				new ExcaptionHandler("Error accepting a new client connection - Server.java",e.getMessage(),e.getStackTrace().toString());
 				break;
 			}			
 		}
@@ -46,7 +46,7 @@ public class Server {
 		try {
 			listeningSocket.close();
 		} catch (IOException e) {
-			new ErrorLog("Error while closing the listening socket",e.getMessage(),e.getStackTrace().toString());
+			new ExcaptionHandler("Error while closing the listening socket",e.getMessage(),e.getStackTrace().toString());
 		}finally {
 			threadPool.shutdown();
 		}		

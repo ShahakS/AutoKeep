@@ -1,4 +1,4 @@
-package classes;
+package UserControl;
 public class UserModel {
 	private String emailAddress;
 	private String password;

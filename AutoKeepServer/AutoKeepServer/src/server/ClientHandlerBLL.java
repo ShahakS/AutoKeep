@@ -3,12 +3,12 @@ package server;
 import java.sql.SQLException;
 import java.util.Queue;
 
-import classes.CommunicationInterpreter;
-import classes.ErrorLog;
-import classes.ProtocolMessage;
-import classes.ReservationModel;
-import classes.VehicleDAL;
-import classes.VehicleModel;
+import ClientServerProtocols.ProtocolMessage;
+import CommunicationManager.CommunicationInterpreter;
+import ReservationControl.ReservationModel;
+import VehicleControl.VehicleDAL;
+import VehicleControl.VehicleModel;
+import exceptionsPackage.ExcaptionHandler;
 
 public class ClientHandlerBLL {
 	private CommunicationInterpreter interpreter;
@@ -64,7 +64,7 @@ public class ClientHandlerBLL {
 				protocolMsg = interpreter.encodeObjToJson(protocolMessage, vehiclesResults);
 			}
 		} catch (SQLException e) {
-			new ErrorLog("Exception thrown out from SEARCH_VEHICLE case", e.getMessage(), e.getStackTrace().toString());
+			new ExcaptionHandler("Exception thrown out from SEARCH_VEHICLE case", e.getMessage(), e.getStackTrace().toString());
 			String message = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);
 			protocolMsg = interpreter.encodeObjToJson(ProtocolMessage.ERROR,message);
 		}	

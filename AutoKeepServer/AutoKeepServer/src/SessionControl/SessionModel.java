@@ -1,4 +1,4 @@
-package classes;
+package SessionControl;
 
 public class SessionModel {
 	int sessionID;

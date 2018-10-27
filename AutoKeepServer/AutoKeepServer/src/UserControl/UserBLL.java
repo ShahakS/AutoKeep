@@ -1,8 +1,11 @@
-package classes;
+package UserControl;
 
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.Queue;
+
+import ClientServerProtocols.ProtocolMessage;
+import CommunicationManager.CommunicationInterpreter;
 
 public class UserBLL {
 	private CommunicationInterpreter interpreter;

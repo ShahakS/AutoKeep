@@ -1,4 +1,7 @@
-package classes;
+package ReservationControl;
+
+import UserControl.UserModel;
+import VehicleControl.VehicleModel;
 
 public class ReservationModel {
 	private int reservationID;
