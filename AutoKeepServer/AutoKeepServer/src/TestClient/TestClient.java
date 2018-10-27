@@ -15,12 +15,12 @@ import classes.VehicleModel;
 //test
 public class TestClient {
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 		ObjectInputStream readClientData = null;
 		ObjectOutputStream sendClientData = null;
 		
 		try {
-			@SuppressWarnings("resource")
+
 			Socket clientSocket = new Socket("localhost", 40501);
 			
 			sendClientData = new ObjectOutputStream(clientSocket.getOutputStream());
@@ -30,7 +30,7 @@ public class TestClient {
 			String serverAnswer;
 			int numOfRetries = 5;
 			boolean isConnected = false;
-			String email = "shahak.shaked@gmail.com";
+			String email = "shahak.shaked@gmail.com1";
 			do{
 				Queue<String> keys = new LinkedList<>();
 				Queue<String> values = new LinkedList<>();
@@ -43,7 +43,13 @@ public class TestClient {
 				if (c.getProtocolMsg(serverAnswer) == ProtocolMessage.OK) {
 					isConnected = true;
 					System.out.println(c.getProtocolMsg(serverAnswer));
+				}else if(c.getProtocolMsg(serverAnswer) == ProtocolMessage.USER_IS_BANNED) {
+					System.out.println(c.decodeFromJsonToObj(ProtocolMessage.USER_IS_BANNED, serverAnswer));
+					break;
+				}else if(c.getProtocolMsg(serverAnswer) == ProtocolMessage.TOO_MANY_AUTHENTICATION_RETRIES) {
+					System.out.println(c.decodeFromJsonToObj(ProtocolMessage.TOO_MANY_AUTHENTICATION_RETRIES, serverAnswer));
 				}
+				System.out.println(c.getProtocolMsg(serverAnswer));
 				numOfRetries--;
 			}while((!(c.getProtocolMsg(serverAnswer)).equals(ProtocolMessage.OK)) && numOfRetries>0);
 			
@@ -61,11 +67,13 @@ public class TestClient {
 
 				sendClientData.writeObject(search);
 				serverAnswer = (String) readClientData.readObject();
+				@SuppressWarnings("unchecked")
 				Queue<VehicleModel> list =(Queue<VehicleModel>)c.decodeFromJsonToObj(c.getProtocolMsg(serverAnswer), serverAnswer);
 				while(!list.isEmpty())
 					System.out.println(list.poll().getPlateNumber());
 			}
-			
+			Thread.currentThread().sleep(2000);
+			clientSocket.close();
 			
 		}catch (IOException e) {
 			e.printStackTrace();

@@ -2,13 +2,16 @@ package classes;
 
 public class SessionModel {
 	int sessionID;
-	String connectedUser;
-	String connectionTime;
-	String disconnectionTime;
+	private String connectedUser;
+	private String connectionTime;
+	private String disconnectionTime;
+	private String ipAddress;
 	
-	public SessionModel(String connectedUser) {
+	public SessionModel(String connectedUser, String connectionTime,String ipAddress) {
 		super();
+		this.ipAddress = ipAddress;
 		this.connectedUser = connectedUser;
+		this.connectionTime = connectionTime;
 	}
 	
 	public SessionModel(int sessionID, String connectedUser, String connectionTime, String disconnectionTime) {
@@ -45,5 +48,13 @@ public class SessionModel {
 
 	public String getConnectedUser() {
 		return connectedUser;
+	}
+
+	public String getIpAddress() {
+		return ipAddress;
+	}
+
+	public void setIpAddress(String ipAddress) {
+		this.ipAddress = ipAddress;
 	}
 }

@@ -4,6 +4,7 @@ public enum ProtocolMessage {
 	OK,
 	WRONG_CREDENTIAL,
 	LOGIN,
+	USER_IS_BANNED,
 	SEARCH_VEHICLE,
 	NO_AVAILABLE_VEHICLES,
 	NEW_ORDER,
@@ -20,7 +21,7 @@ public enum ProtocolMessage {
 	TOO_MANY_AUTHENTICATION_RETRIES,	
 	INTERNAL_ERROR;
 
-	public static String getMessage(ProtocolMessage protocolMessage) {
+	public static String getMessage(ProtocolMessage protocolMessage,String ...customMessage) {
 		String messageString;
 	
 		switch (protocolMessage) {
@@ -33,7 +34,8 @@ public enum ProtocolMessage {
 				break;
 				
 			case TOO_MANY_AUTHENTICATION_RETRIES:
-				messageString = "You have been tried to connect 5 times.\nPlease Try again later";
+				messageString = "You have been tried to connect 5 times\nPlease Try again in "
+														+SessionManager.BAN_DURATION + " seconds";
 				break;
 				
 			case NO_AVAILABLE_VEHICLES:
@@ -44,6 +46,10 @@ public enum ProtocolMessage {
 				messageString = "Internal error.\nPlease contact suppport";
 				break;
 				
+			case USER_IS_BANNED:
+				messageString = "You have been banned due to a large number of login attempts\n"
+								+ "Please try again in " +customMessage[0]+ " seconds";
+				break;
 			default:
 				messageString = "Protocol Message case is not defined";
 		}		

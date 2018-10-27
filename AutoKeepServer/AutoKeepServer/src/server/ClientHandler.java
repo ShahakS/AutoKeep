@@ -9,8 +9,7 @@ import java.sql.SQLException;
 import classes.CommunicationInterpreter;
 import classes.ErrorLog;
 import classes.ProtocolMessage;
-import classes.SessionDAL;
-import classes.SessionModel;
+import classes.SessionManager;
 import classes.UserDAL;
 import classes.UserModel;
 
@@ -20,9 +19,11 @@ public class ClientHandler implements Runnable{
 	private ObjectInputStream readClientData;
 	private ObjectOutputStream sendClientData;
 	private UserModel user;
-	private SessionModel currentSession;
+	private SessionManager sessionManager;
 	
 	public ClientHandler(Socket socket) throws IOException{
+		this.sessionManager = SessionManager.startSession();
+		user = new UserModel();
 		this.clientSocket = socket;
 		this.interpreter = new CommunicationInterpreter();
 		this.readClientData = new ObjectInputStream(clientSocket.getInputStream());
@@ -53,21 +54,13 @@ public class ClientHandler implements Runnable{
 					sendObjToClient(errorJsonString);	
 				}
 			}
-			disconnect();
-		}else{
-			String errorMsg = ProtocolMessage.getMessage(ProtocolMessage.TOO_MANY_AUTHENTICATION_RETRIES);
-			String errorString = interpreter.encodeObjToJson(ProtocolMessage.ERROR,errorMsg);
-			sendObjToClient(errorString);
 		}
+		disconnect();
 		System.out.println("Disconnected");
 	}
 
 	private void disconnect() {
-		try {
-			new SessionDAL().closeCorrectSession(currentSession.getSessionID());
-		} catch (SQLException e) {
-			new ErrorLog("Exception while trying to disconnect.Thrown by disconnect()", e.getMessage(), e.getStackTrace().toString());
-		}		
+		sessionManager.closeSession(user.getEmailAddress(),clientSocket);
 	}
 
 	/**
@@ -79,6 +72,14 @@ public class ClientHandler implements Runnable{
 		boolean isAuthenticated = false;
 		String authResponse;
 		
+		if (sessionManager.isBanned(clientSocket)) {
+			ProtocolMessage protocolMsg = ProtocolMessage.USER_IS_BANNED;
+			String customMsg = ProtocolMessage.getMessage(protocolMsg,sessionManager.getRemainingBanTime(clientSocket));
+			String errorJsonString = interpreter.encodeObjToJson(protocolMsg,customMsg);
+			sendObjToClient(errorJsonString);
+			return false;
+		}
+		
 		for(int numOfRetries = 5;!isAuthenticated && numOfRetries > 0;numOfRetries--) {
 			try {
 				String clientCredential = readClientData();
@@ -88,11 +89,12 @@ public class ClientHandler implements Runnable{
 				ProtocolMessage protocolMessage;
 				
 				if (isAuthenticated) {
-					currentSession = new SessionDAL().initializeNewSession(user.getEmailAddress());
+					sessionManager.userLoggedIn(clientSocket,user.getEmailAddress());
 					protocolMessage = ProtocolMessage.OK;
 					authResponse = interpreter.encodeObjToJson(protocolMessage, ProtocolMessage.getMessage(protocolMessage));
 					isAuthenticated = true;
 				}else if (numOfRetries == 1) {
+					sessionManager.ban(clientSocket);
 					protocolMessage = ProtocolMessage.TOO_MANY_AUTHENTICATION_RETRIES;
 					authResponse = interpreter.encodeObjToJson(protocolMessage,ProtocolMessage.getMessage(protocolMessage));
 				}else{

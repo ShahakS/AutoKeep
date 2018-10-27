@@ -2,7 +2,7 @@ package classes;
 public class UserModel {
 	private String emailAddress;
 	private String password;
-	private String dateOfBirth;//1989-12-27
+	private String dateOfBirth;
 	private String firstName;
 	private String lastName;
 	private String phoneNumber;
@@ -18,6 +18,9 @@ public class UserModel {
 		this.emailAddress = emailAddress;
 		this.phoneNumber = phoneNumber;
 		this.IsAdministrator = IsAdministrator;
+	}
+
+	public UserModel() {
 	}
 
 	public String getPassword() {
