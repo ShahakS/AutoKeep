@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import server.DatabaseConnector;
+import Database.DatabaseConnector;
 
 public class ExcaptionHandler{
 	private String errorTimeStamp;

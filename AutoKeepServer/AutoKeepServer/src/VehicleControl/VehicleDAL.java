@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import server.DatabaseConnector;
+import Database.DatabaseConnector;
 
 public class VehicleDAL {
 	private DatabaseConnector DBconnector;

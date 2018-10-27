@@ -1,4 +1,4 @@
-package server;
+package Database;
 
 import java.util.ArrayList;
 
