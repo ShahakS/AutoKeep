@@ -122,7 +122,7 @@ public class DatabaseConnector {
 			statement.execute();
 			returnedValue = statement.getInt(1);	
 		} catch (SQLException e) {
-			ExcaptionHandler error = new ExcaptionHandler("Error Calling Stored Procedure from callSpWithSingleValue with statement: "+query ,e.getMessage(),e.getStackTrace().toString());
+			ExcaptionHandler error = new ExcaptionHandler("Error Calling Stored Procedure from callSpWithSingleValue with statement: "+query ,e);
 			error.writeToErrorLog();
 			throw e;
 		}

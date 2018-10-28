@@ -79,7 +79,7 @@ public class ClientHandlerBLL {
 				outgoingData = interpreter.encodeObjToJson(protocolMessage, vehiclesResults);
 			}
 		} catch (SQLException e) {
-			new ExcaptionHandler("Exception thrown out from SEARCH_VEHICLE case", e.getMessage(), e.getStackTrace().toString());
+			new ExcaptionHandler("Exception thrown out from SEARCH_VEHICLE case", e);
 			String message = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);
 			outgoingData = interpreter.encodeObjToJson(ProtocolMessage.ERROR,message);
 		}	

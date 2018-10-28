@@ -28,7 +28,7 @@ public class Server {
 			listeningSocket = new ServerSocket(LISTENING_PORT);
 			
 		} catch (IOException e) {
-			new ExcaptionHandler("Error while creating the listening socket",e.getMessage(),e.getStackTrace().toString());
+			new ExcaptionHandler("Error while creating the listening socket",e);
 			System.exit(1);
 		}
 		
@@ -39,7 +39,7 @@ public class Server {
 				clientSocket = listeningSocket.accept();
 				threadPool.execute(new ClientHandler(clientSocket));
 			} catch (IOException e) {
-				new ExcaptionHandler("Error accepting a new client connection - Server.java",e.getMessage(),e.getStackTrace().toString());
+				new ExcaptionHandler("Error accepting a new client connection - Server.java",e);
 				break;
 			}			
 		}
@@ -47,7 +47,7 @@ public class Server {
 		try {
 			listeningSocket.close();
 		} catch (IOException e) {
-			new ExcaptionHandler("Error while closing the listening socket",e.getMessage(),e.getStackTrace().toString());
+			new ExcaptionHandler("Error while closing the listening socket",e);
 		}finally {
 			threadPool.shutdown();
 		}		

@@ -3,8 +3,6 @@ package server;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.Socket;
 import java.sql.SQLException;
 
@@ -50,7 +48,7 @@ public class ClientHandler implements Runnable{
 				}catch (IOException e) {
 					isConnected = false;
 				}catch (ClassNotFoundException e) {
-					new ExcaptionHandler("Exception Thrown by ClientHandler while casting", e.getMessage(), e.getStackTrace().toString());
+					new ExcaptionHandler("Exception Thrown by ClientHandler while casting",e);
 					String errorMsg = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);
 					String errorJsonString = interpreter.encodeObjToJson(ProtocolMessage.ERROR,errorMsg);
 					sendObjToClient(errorJsonString);	
@@ -105,12 +103,7 @@ public class ClientHandler implements Runnable{
 				}				
 				sendObjToClient(authResponse);				
 			} catch (ClassNotFoundException | SQLException e) {
-				StringWriter sw = new StringWriter();
-				PrintWriter pw = new PrintWriter(sw);
-				e.printStackTrace(pw);
-				String sStackTrace = sw.toString(); // stack trace as a string
-				System.out.println(sStackTrace);
-				new ExcaptionHandler("Exception while authenticate user", e.getMessage(), sStackTrace);
+				new ExcaptionHandler("Exception while authenticate user", e);
 				String errorMsg = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);
 				String errorJsonString = interpreter.encodeObjToJson(ProtocolMessage.ERROR,errorMsg);
 				sendObjToClient(errorJsonString);				
@@ -132,7 +125,7 @@ public class ClientHandler implements Runnable{
 			sendClientData.writeObject(outgoingString);
 		} catch (IOException e) {
 			//Connection closed
-			new ExcaptionHandler("sendObjToClient()", e.getMessage(), e.getStackTrace().toString());
+			new ExcaptionHandler("sendObjToClient()",e);
 		}		
 	}
 	

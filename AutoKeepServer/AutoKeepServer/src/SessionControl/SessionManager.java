@@ -81,7 +81,7 @@ public class SessionManager {
 			milliseconds = currentTimeDate.getTime() - bannedTimeDate.getTime();
 			timeDifference = TimeUnit.MILLISECONDS.toSeconds(milliseconds);
 		} catch (ParseException e) {
-			new ExcaptionHandler("Cannot parse String.Thrown By getTimeDifference()", e.getMessage(), e.getStackTrace().toString());
+			new ExcaptionHandler("Cannot parse String.Thrown By getTimeDifference()", e);
 		}	
 		
 		return timeDifference;
@@ -188,7 +188,7 @@ public class SessionManager {
 				try {
 					new SessionDAL().addSessionToDB(emailAddress,connectionTime,disconnectionTime, clientIpAddress);
 				} catch (SQLException e) {
-					new ExcaptionHandler("Exception while trying to disconnect.Thrown by closeSession()", e.getMessage(), e.getStackTrace().toString());
+					new ExcaptionHandler("Exception while trying to disconnect.Thrown by closeSession()", e);
 				}
 				removeSessionModel(sessionModel);
 			}			

@@ -88,7 +88,7 @@ public class CommunicationInterpreter {
 				return jsonObj.toString();
 			}
 		}catch(ClassCastException e) {
-			ExcaptionHandler error = new ExcaptionHandler("Mismatched obj and protocolMsg - couldn't cast",e.getMessage(),e.getStackTrace().toString());
+			ExcaptionHandler error = new ExcaptionHandler("Mismatched obj and protocolMsg - couldn't cast",e);
 			error.writeToErrorLog();
 			throw e;
 		}		

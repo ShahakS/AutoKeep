@@ -35,7 +35,7 @@ public class TestClient {
 				Queue<String> keys = new LinkedList<>();
 				Queue<String> values = new LinkedList<>();
 				keys.add("user");
-				values.add("{emailAddress:"+email+",pasword:\"@m1234\"}");
+				values.add("{emailAddress:"+email+",password:\"@m1234\"}");
 				String str = c.encodeParametersToJson(ProtocolMessage.LOGIN, keys, values);
 				sendClientData.writeObject(str);
 				serverAnswer = (String) readClientData.readObject();
