@@ -10,6 +10,7 @@ import exceptionsPackage.ExcaptionHandler;
 
 public class Server {
 	private final int THREAD_NUMBER = 20;
+	private final int LISTENING_PORT = 40501;
 	
 	public static void main(String[] args) {
 		Server server = new Server();
@@ -24,7 +25,7 @@ public class Server {
 		ServerSocket listeningSocket = null;		
 		
 		try {
-			listeningSocket = new ServerSocket(40501);
+			listeningSocket = new ServerSocket(LISTENING_PORT);
 			
 		} catch (IOException e) {
 			new ExcaptionHandler("Error while creating the listening socket",e.getMessage(),e.getStackTrace().toString());

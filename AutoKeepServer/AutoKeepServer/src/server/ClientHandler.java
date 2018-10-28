@@ -3,6 +3,8 @@ package server;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.Socket;
 import java.sql.SQLException;
 
@@ -103,7 +105,12 @@ public class ClientHandler implements Runnable{
 				}				
 				sendObjToClient(authResponse);				
 			} catch (ClassNotFoundException | SQLException e) {
-				new ExcaptionHandler("Exception while authenticate user", e.getMessage(), e.getStackTrace().toString());
+				StringWriter sw = new StringWriter();
+				PrintWriter pw = new PrintWriter(sw);
+				e.printStackTrace(pw);
+				String sStackTrace = sw.toString(); // stack trace as a string
+				System.out.println(sStackTrace);
+				new ExcaptionHandler("Exception while authenticate user", e.getMessage(), sStackTrace);
 				String errorMsg = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);
 				String errorJsonString = interpreter.encodeObjToJson(ProtocolMessage.ERROR,errorMsg);
 				sendObjToClient(errorJsonString);				

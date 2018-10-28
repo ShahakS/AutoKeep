@@ -20,24 +20,24 @@ public class ClientHandlerBLL {
 	}
 
 	public String bll(String incomingData) {
-		String serverReply = null;
+		String outgoingData = null;
 			
 		switch(interpreter.getProtocolMsg(incomingData)) {
 			case SEARCH_VEHICLE:
-				serverReply = searchVehicle(incomingData); 
+				outgoingData = searchVehicle(incomingData); 
 				break;
 			case NEW_ORDER:
-				serverReply = makeNewOrder(incomingData); 
+				outgoingData = makeNewOrder(incomingData); 
 				break;
 			case USER_CHANGE_PASSWORD:
-				serverReply= changePassword(incomingData);
+				outgoingData= changePassword(incomingData);
 				break;
 			
 			default:
 				
 		}
 
-		return serverReply;
+		return outgoingData;
 	}
 
 	private String changePassword(String incomingData) {
@@ -59,7 +59,7 @@ public class ClientHandlerBLL {
 
 	private String searchVehicle(String incomingData) {
 		VehicleDAL vehicleDAL = new VehicleDAL();
-		String protocolMsg;
+		String outgoingData;
 		
 		try {
 			ReservationModel reservation = (ReservationModel)interpreter.decodeFromJsonToObj(ProtocolMessage.RESERVATION_MODEL, incomingData);
@@ -72,18 +72,18 @@ public class ClientHandlerBLL {
 			if (vehiclesResults == null) {
 				ProtocolMessage protocolMessage = ProtocolMessage.NO_AVAILABLE_VEHICLES;
 				String message = ProtocolMessage.getMessage(protocolMessage);
-				protocolMsg = interpreter.encodeObjToJson(protocolMessage, message);
+				outgoingData = interpreter.encodeObjToJson(protocolMessage, message);
 			}
 			else {
 				ProtocolMessage protocolMessage = ProtocolMessage.VEHICLE_MODEL_LIST;
-				protocolMsg = interpreter.encodeObjToJson(protocolMessage, vehiclesResults);
+				outgoingData = interpreter.encodeObjToJson(protocolMessage, vehiclesResults);
 			}
 		} catch (SQLException e) {
 			new ExcaptionHandler("Exception thrown out from SEARCH_VEHICLE case", e.getMessage(), e.getStackTrace().toString());
 			String message = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);
-			protocolMsg = interpreter.encodeObjToJson(ProtocolMessage.ERROR,message);
+			outgoingData = interpreter.encodeObjToJson(ProtocolMessage.ERROR,message);
 		}	
-		return protocolMsg;
+		return outgoingData;
 	}
 	
 	private String makeNewOrder(String incomingData) {

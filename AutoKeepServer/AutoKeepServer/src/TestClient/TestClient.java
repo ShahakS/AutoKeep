@@ -21,7 +21,7 @@ public class TestClient {
 		
 		try {
 
-			Socket clientSocket = new Socket("shahak18.ddns.net", 40501);
+			Socket clientSocket = new Socket("localhost", 40501);
 			
 			sendClientData = new ObjectOutputStream(clientSocket.getOutputStream());
 			readClientData = new ObjectInputStream(clientSocket.getInputStream());
@@ -35,7 +35,7 @@ public class TestClient {
 				Queue<String> keys = new LinkedList<>();
 				Queue<String> values = new LinkedList<>();
 				keys.add("user");
-				values.add("{emailAddress:"+email+",password:\"@m1234\"}");
+				values.add("{emailAddress:"+email+",pasword:\"@m1234\"}");
 				String str = c.encodeParametersToJson(ProtocolMessage.LOGIN, keys, values);
 				sendClientData.writeObject(str);
 				serverAnswer = (String) readClientData.readObject();
@@ -53,7 +53,23 @@ public class TestClient {
 				numOfRetries--;
 			}while((!(c.getProtocolMsg(serverAnswer)).equals(ProtocolMessage.OK)) && numOfRetries>0);
 			
-			if (isConnected) {
+			if (false) {
+				{
+				Queue<String> keys = new LinkedList<>();
+				Queue<String> values = new LinkedList<>();
+				keys.add("user");
+				values.add("{emailAddress:"+email+",password:\"@m1234\"}");
+				String str = c.encodeParametersToJson(ProtocolMessage.USER_CHANGE_PASSWORD, keys, values);
+				sendClientData.writeObject(str);
+				serverAnswer = (String) readClientData.readObject();
+				System.out.println(c.getProtocolMsg(serverAnswer));
+				if (c.getProtocolMsg(serverAnswer) == ProtocolMessage.PASSWORD_CHANGED_SUCCESSFULLY) {
+					System.out.println(c.decodeFromJsonToObj(ProtocolMessage.CHANGING_PASSWORD_FAILED, serverAnswer));
+				}else if(c.getProtocolMsg(serverAnswer) == ProtocolMessage.CHANGING_PASSWORD_FAILED) {
+					System.out.println(c.decodeFromJsonToObj(ProtocolMessage.CHANGING_PASSWORD_FAILED, serverAnswer));
+				}
+				}
+				
 				UserModel user = new UserModel("sad", "", "", "", "", "", true);
 				VehicleModel vehicle = new VehicleModel("1", "", "", "FAMILY", 6, 5, 1600, true, 213033, "");
 				ReservationModel r = new ReservationModel(1, user, vehicle, "2018-09-09", "2018-11-09", "2018-11-09");
@@ -74,7 +90,7 @@ public class TestClient {
 				
 				
 			}
-			Thread.currentThread().sleep(2000);
+			
 			clientSocket.close();
 			
 		}catch (IOException e) {
