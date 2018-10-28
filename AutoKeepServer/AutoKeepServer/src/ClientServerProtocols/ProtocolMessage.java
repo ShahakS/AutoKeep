@@ -48,7 +48,7 @@ public enum ProtocolMessage {
 				
 			case INTERNAL_ERROR:
 				messageString = "Internal error.\nPlease contact system suppport";
-				break;
+				break; 
 				
 			case USER_IS_BANNED:
 				messageString = "You have been banned due to a large number of login attempts\n"
