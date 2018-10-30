@@ -15,15 +15,30 @@ public class VehicleDAL {
 	}
 	
 	public Queue<VehicleModel> searchAvailableVehicles(String startDate,String endDate,String vehicleType,int seatsNumber) throws SQLException{
-		String query = "SELECT * FROM fn_GetAvailableVehiclesByParameters(?,?,?,?)";
 		Queue<Object> parameters = new LinkedList<>();
 		VehicleModel vehicle = null;
-
+		String query;
+		
 		parameters.add(startDate);
 		parameters.add(endDate);
-		parameters.add(vehicleType);
-		parameters.add(seatsNumber);
-			
+		
+		if (vehicleType.equals("")){
+			if(seatsNumber == -1) {
+				query = "SELECT * FROM fn_GetAvailableVehiclesByDate(?,?)";
+			}else{
+				query = "SELECT * FROM fn_GetAvailableVehiclesByDateAndSeatsNumber(?,?,?)";
+				parameters.add(seatsNumber);
+			}	
+		}else {
+			if(seatsNumber == -1) {
+				query = "SELECT * FROM fn_GetAvailableVehiclesByDateAndVehicleType(?,?,?)";
+				parameters.add(vehicleType);
+			}else{
+				query = "SELECT * FROM fn_GetAvailableVehiclesByParameters(?,?,?,?)";
+				parameters.add(vehicleType);
+				parameters.add(seatsNumber);
+			}	
+		}			
 		ResultSet resultSet = DBconnector.executeSqlStatementDataTable(query, parameters);
 		Queue<VehicleModel> vehicles = new LinkedList<>();		
 		

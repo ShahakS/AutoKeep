@@ -17,8 +17,8 @@ import exceptionsPackage.ExcaptionHandler;
 
 public class SessionManager {
 	private static SessionManager sessionManager = new SessionManager();
-	private static ArrayList<SessionModel> sessions;
-	private static Map<String,String> blockedIps;
+	private ArrayList<SessionModel> sessions;
+	private Map<String,String> blockedIps;
 	public static final long BAN_DURATION = 30; 
 	
 	private SessionManager() {

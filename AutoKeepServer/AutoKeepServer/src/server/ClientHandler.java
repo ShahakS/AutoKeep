@@ -8,9 +8,12 @@ import java.sql.SQLException;
 
 import ClientServerProtocols.ProtocolMessage;
 import CommunicationManager.CommunicationInterpreter;
+import ReservationControl.ReservationBLL;
 import SessionControl.SessionManager;
+import UserControl.UserBLL;
 import UserControl.UserDAL;
 import UserControl.UserModel;
+import VehicleControl.VehicleBLL;
 import exceptionsPackage.ExcaptionHandler;
 
 public class ClientHandler implements Runnable{
@@ -18,12 +21,19 @@ public class ClientHandler implements Runnable{
 	private CommunicationInterpreter interpreter;
 	private ObjectInputStream readClientData;
 	private ObjectOutputStream sendClientData;
-	private UserModel user;
 	private SessionManager sessionManager;
+	private UserModel user;
+	private UserBLL userBLL;
+	private VehicleBLL vehicleBLL;
+	private ReservationBLL reservationBLL;
+	
 	
 	public ClientHandler(Socket socket) throws IOException{
 		this.sessionManager = SessionManager.startSession();
-		user = new UserModel();
+		this.user = new UserModel();
+		this.userBLL = new UserBLL();
+		this.vehicleBLL = new VehicleBLL();
+		this.reservationBLL = new ReservationBLL();
 		this.clientSocket = socket;
 		this.interpreter = new CommunicationInterpreter();
 		this.readClientData = new ObjectInputStream(clientSocket.getInputStream());
@@ -36,13 +46,11 @@ public class ClientHandler implements Runnable{
 		boolean isConnected = true;
 		boolean isAuthenticated = connect();
 		
-		if (isAuthenticated) {
-			ClientHandlerBLL clientHandlerBLL = new ClientHandlerBLL();
-			
+		if (isAuthenticated) {			
 			while(isConnected) {
 				try {
 					String incomingData = (String) readClientData.readObject();
-					String OutgoingData = clientHandlerBLL.bll(incomingData);					
+					String OutgoingData = businessLogicFlow(incomingData);					
 					sendObjToClient(OutgoingData);
 					
 				}catch (IOException e) {
@@ -55,14 +63,30 @@ public class ClientHandler implements Runnable{
 				}
 			}
 		}
-		disconnect();
+		userBLL.disconnect(sessionManager,user.getEmailAddress(),clientSocket);
 		System.out.println("Disconnected");
 	}
 
-	private void disconnect() {
-		sessionManager.closeSession(user.getEmailAddress(),clientSocket);
-	}
+	public String businessLogicFlow(String incomingData) {
+		String outgoingData = null;
+			
+		switch(interpreter.getProtocolMsg(incomingData)) {
+			case SEARCH_VEHICLE:
+				outgoingData = vehicleBLL.searchVehicle(incomingData); 
+				break;
+			case ORDER:
+				outgoingData = reservationBLL.order(incomingData,user.getEmailAddress()); 
+				break;
+			case USER_CHANGE_PASSWORD:
+				outgoingData= userBLL.changePassword(incomingData);
+				break;
+			
+			default:				
+		}
 
+		return outgoingData;
+	}	
+	
 	/**
 	 * Connect the user to the application with the given credentials
 	 * @return true if credential is passed else returns false
@@ -91,8 +115,8 @@ public class ClientHandler implements Runnable{
 				if (isAuthenticated) {
 					sessionManager.userLoggedIn(clientSocket,user.getEmailAddress());
 					protocolMessage = ProtocolMessage.OK;
+					this.user = userBLL.getUserModel(user.getEmailAddress());
 					authResponse = interpreter.encodeObjToJson(protocolMessage, ProtocolMessage.getMessage(protocolMessage));
-					isAuthenticated = true;
 				}else if (numOfRetries == 1) {
 					sessionManager.ban(clientSocket);
 					protocolMessage = ProtocolMessage.TOO_MANY_AUTHENTICATION_RETRIES;

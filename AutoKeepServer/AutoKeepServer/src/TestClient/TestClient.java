@@ -31,6 +31,7 @@ public class TestClient {
 			int numOfRetries = 5;
 			boolean isConnected = false;
 			String email = "shahak.shaked@gmail.com";
+			//connect
 			do{
 				Queue<String> keys = new LinkedList<>();
 				Queue<String> values = new LinkedList<>();
@@ -53,8 +54,9 @@ public class TestClient {
 				numOfRetries--;
 			}while((!(c.getProtocolMsg(serverAnswer)).equals(ProtocolMessage.OK)) && numOfRetries>0);
 			
-			if (false) {
+			if (isConnected) {
 				{
+				//change pass
 				Queue<String> keys = new LinkedList<>();
 				Queue<String> values = new LinkedList<>();
 				keys.add("user");
@@ -69,7 +71,8 @@ public class TestClient {
 					System.out.println(c.decodeFromJsonToObj(ProtocolMessage.CHANGING_PASSWORD_FAILED, serverAnswer));
 				}
 				}
-				
+				{
+				//get available vehicles
 				UserModel user = new UserModel("sad", "", "", "", "", "", true);
 				VehicleModel vehicle = new VehicleModel("1", "", "", "FAMILY", 6, 5, 1600, true, 213033, "");
 				ReservationModel r = new ReservationModel(1, user, vehicle, "2018-09-09", "2018-11-09", "2018-11-09");
@@ -87,7 +90,28 @@ public class TestClient {
 				Queue<VehicleModel> list =(Queue<VehicleModel>)c.decodeFromJsonToObj(c.getProtocolMsg(serverAnswer), serverAnswer);
 				while(!list.isEmpty())
 					System.out.println(list.poll().getPlateNumber());
+				}
+				//make an order
+				{
+					Queue<String> keys = new LinkedList<>();
+					Queue<String> values = new LinkedList<>();
+					UserModel user = new UserModel("sad", "", "", "", "", "", true);
+					VehicleModel vehicle = new VehicleModel("68-345-79", "", "", "FAMILY", 6, 5, 1600, true, 213033, "");
+					ReservationModel r = new ReservationModel(1, user, vehicle, "2018-09-09", "2018-11-09", "2018-11-09");
+					keys.add("reservation");
+					values.add("{reservationStartDate:"+r.getReservationStartDate()
+							+",reservationEndDate:"+r.getReservationStartDate()
+							+",vehicle:{plateNumber:"+vehicle.getPlateNumber()+"}}");				
+					
+					String search = c.encodeParametersToJson(ProtocolMessage.ORDER, keys, values);
+
+					sendClientData.writeObject(search);
+					
+					serverAnswer = (String) readClientData.readObject();
 				
+					System.out.println(c.decodeFromJsonToObj(c.getProtocolMsg(serverAnswer), serverAnswer));
+					
+				}
 				
 			}
 			
