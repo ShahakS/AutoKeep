@@ -9,7 +9,9 @@ public enum ProtocolMessage {
 	USER_IS_BANNED,
 	SEARCH_VEHICLE,
 	NO_AVAILABLE_VEHICLES,
-	NEW_ORDER,
+	ORDER,
+	ORDER_FAILED,
+	ORDER_BOOKED_SUCCESSFULLY,
 	VIEW_ORDERS,
 	USER_CHANGE_PASSWORD,
 	PASSWORD_CHANGED_SUCCESSFULLY,
@@ -61,6 +63,14 @@ public enum ProtocolMessage {
 				
 			case CHANGING_PASSWORD_FAILED:
 				messageString = "Could not change password\nPlease contact system support";
+				break;
+				
+			case ORDER_BOOKED_SUCCESSFULLY:
+				messageString = "Order Booked Successfully";
+				break;
+				
+			case ORDER_FAILED:
+				messageString = "Failed to book the vehicle\nThe vehicle already booked by other client";
 				break;
 				
 			default:
