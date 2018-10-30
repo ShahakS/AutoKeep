@@ -5,6 +5,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.sql.SQLException;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import ClientServerProtocols.ProtocolMessage;
 import CommunicationManager.CommunicationInterpreter;
@@ -114,9 +116,12 @@ public class ClientHandler implements Runnable{
 				
 				if (isAuthenticated) {
 					sessionManager.userLoggedIn(clientSocket,user.getEmailAddress());
-					protocolMessage = ProtocolMessage.OK;
 					this.user = userBLL.getUserModel(user.getEmailAddress());
-					authResponse = interpreter.encodeObjToJson(protocolMessage, ProtocolMessage.getMessage(protocolMessage));
+					Queue<String> keys = new LinkedList<>();
+					Queue<String> values = new LinkedList<>();
+					keys.add("user");
+					values.add("{firstName:"+user.getFirstName()+",lastName:"+user.getLastName()+"}");
+					authResponse = interpreter.encodeParametersToJson(ProtocolMessage.OK, keys, values);
 				}else if (numOfRetries == 1) {
 					sessionManager.ban(clientSocket);
 					protocolMessage = ProtocolMessage.TOO_MANY_AUTHENTICATION_RETRIES;
