@@ -20,15 +20,10 @@ public class UserDAL {
 		public boolean isUserCredentialValid(UserModel user) throws SQLException {
 			String query = "{?= call fn_IsUserExist(?, ?)}";
 			Queue<Object> parameters = new LinkedList<>();
-			boolean isUserCredentialValid = false;
 
 			parameters.add(user.getEmailAddress());
 			parameters.add(user.getPassword());
-			int returnedValue = DBconnector.callRoutineReturnedScalarValue(query, parameters);
-			
-			if (returnedValue != 0)
-				isUserCredentialValid = true;
-			
+			boolean isUserCredentialValid = DBconnector.callRoutineReturnedBooleanScalarValue(query, parameters);			
 			return isUserCredentialValid;
 		}
 		
@@ -60,7 +55,7 @@ public class UserDAL {
 			UserModel user = null;
 			
 			parameters.add(emailAddress);			
-			ResultSet resultSet = DBconnector.executeSqlStatementDataTable(query, parameters);
+			ResultSet resultSet = DBconnector.executeSqlStatementResultSet(query, parameters);
 			
 			while (resultSet.next()){
 				String password = resultSet.getString("password");

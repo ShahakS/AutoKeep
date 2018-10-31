@@ -22,11 +22,18 @@ public class ReservationDAL {
 			parameters.add(emailAddress);
 			parameters.add(startingDate);
 			parameters.add(endingDate);
-			int returnedValue = DBconnector.callRoutineReturnedScalarValue(query, parameters);
-			
-			if (returnedValue != 0)
-				isBooked = true;
-			
+			isBooked = DBconnector.callRoutineReturnedBooleanScalarValue(query, parameters);			
 			return isBooked;
+	}
+	
+	public boolean isThereAnActiveReservation(String emailAddress) throws SQLException {
+		String query = "{?= call fn_IsThereAnActiveOrder(?)}";
+		boolean IsThereAnActiveOrder;
+		Queue<Object> parameters = new LinkedList<>();
+
+		parameters.add(emailAddress);
+		IsThereAnActiveOrder = DBconnector.callRoutineReturnedBooleanScalarValue(query, parameters);
+		
+		return IsThereAnActiveOrder;
 	}
 }

@@ -39,7 +39,7 @@ public class VehicleDAL {
 				parameters.add(seatsNumber);
 			}	
 		}			
-		ResultSet resultSet = DBconnector.executeSqlStatementDataTable(query, parameters);
+		ResultSet resultSet = DBconnector.executeSqlStatementResultSet(query, parameters);
 		Queue<VehicleModel> vehicles = new LinkedList<>();		
 		
 		while (resultSet.next()){

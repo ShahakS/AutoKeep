@@ -13,6 +13,7 @@ public enum ProtocolMessage {
 	ORDER_FAILED,
 	ORDER_BOOKED_SUCCESSFULLY,
 	VIEW_ORDERS,
+	ACTIVE_ORDER_ALREADY_EXISTS,
 	USER_CHANGE_PASSWORD,
 	PASSWORD_CHANGED_SUCCESSFULLY,
 	CHANGING_PASSWORD_FAILED,
@@ -71,6 +72,10 @@ public enum ProtocolMessage {
 				
 			case ORDER_FAILED:
 				messageString = "Failed to book the vehicle\nThe vehicle already booked by other client";
+				break;
+				
+			case ACTIVE_ORDER_ALREADY_EXISTS:
+				messageString = "Can't book more then 1 vehicle at a given time.\nActive order already exists";
 				break;
 				
 			default:

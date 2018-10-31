@@ -29,7 +29,6 @@ public class ClientHandler implements Runnable{
 	private VehicleBLL vehicleBLL;
 	private ReservationBLL reservationBLL;
 	
-	
 	public ClientHandler(Socket socket) throws IOException{
 		this.sessionManager = SessionManager.startSession();
 		this.user = new UserModel();

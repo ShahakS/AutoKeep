@@ -19,23 +19,31 @@ public class ReservationBLL {
 		String outgoingData = null;
 		
 		try {
-			ReservationModel requiredReservation = (ReservationModel)interpreter.decodeFromJsonToObj(ProtocolMessage.RESERVATION_MODEL, incomingData);
-			String startingDate = requiredReservation.getReservationStartDate();
-			String endingDate = requiredReservation.getReservationEndDate();
-			String plateNumber = requiredReservation.getVehicle().getPlateNumber();
-			boolean isBookedSuccessfully = reservationDAL.order(plateNumber,emailAddress, startingDate, endingDate);		
-	
-			if (isBookedSuccessfully) {
-				ProtocolMessage protocolMessage = ProtocolMessage.ORDER_BOOKED_SUCCESSFULLY;
-				String message = ProtocolMessage.getMessage(protocolMessage);
-				outgoingData = interpreter.encodeObjToJson(protocolMessage, message);
-			}
-			else {
-				ProtocolMessage protocolMessage = ProtocolMessage.ORDER_FAILED;
-				String message = ProtocolMessage.getMessage(protocolMessage);
-				outgoingData = interpreter.encodeObjToJson(protocolMessage, message);
-				//TODO CHECK IF ORDER IS ATOMIC
-			}		
+			boolean isThereAnActiveReservation= reservationDAL.isThereAnActiveReservation(emailAddress);
+			
+			if (isThereAnActiveReservation) {
+				String message = ProtocolMessage.getMessage(ProtocolMessage.ACTIVE_ORDER_ALREADY_EXISTS);
+				outgoingData = interpreter.encodeObjToJson(ProtocolMessage.ORDER_FAILED, message);
+				return outgoingData;				
+			}else {
+				ReservationModel requiredReservation = (ReservationModel)interpreter.decodeFromJsonToObj(ProtocolMessage.RESERVATION_MODEL, incomingData);
+				String startingDate = requiredReservation.getReservationStartDate();
+				String endingDate = requiredReservation.getReservationEndDate();
+				String plateNumber = requiredReservation.getVehicle().getPlateNumber();
+				boolean isBookedSuccessfully = reservationDAL.order(plateNumber,emailAddress, startingDate, endingDate);		
+				
+				if (isBookedSuccessfully) {
+					ProtocolMessage protocolMessage = ProtocolMessage.ORDER_BOOKED_SUCCESSFULLY;
+					String message = ProtocolMessage.getMessage(protocolMessage);
+					outgoingData = interpreter.encodeObjToJson(protocolMessage, message);
+				}
+				else {
+					ProtocolMessage protocolMessage = ProtocolMessage.ORDER_FAILED;
+					String message = ProtocolMessage.getMessage(protocolMessage);
+					outgoingData = interpreter.encodeObjToJson(protocolMessage, message);
+					//TODO CHECK IF ORDER IS ATOMIC
+				}	
+			}				
 		} catch (SQLException e) {
 			new ExcaptionHandler("Exception thrown out from ReservationBLL.order()", e);
 			String message = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);
