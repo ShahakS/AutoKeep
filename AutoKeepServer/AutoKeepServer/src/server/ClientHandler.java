@@ -30,6 +30,7 @@ public class ClientHandler implements Runnable{
 	private ReservationBLL reservationBLL;
 	
 	public ClientHandler(Socket socket) throws IOException{
+		System.out.println("Connected");
 		this.sessionManager = SessionManager.startSession();
 		this.user = new UserModel();
 		this.userBLL = new UserBLL();
@@ -41,9 +42,7 @@ public class ClientHandler implements Runnable{
 		this.sendClientData = new ObjectOutputStream(clientSocket.getOutputStream());
 	}
 	
-	public void run() {
-		System.out.println("Connected");	
-		
+	public void run() {		
 		boolean isConnected = true;
 		boolean isAuthenticated = connect();
 		
@@ -144,7 +143,7 @@ public class ClientHandler implements Runnable{
 	}
 	
 	/**
-	 * Send a String object to Client
+	 * Send a String object to the Client
 	 * @param outgoingString - JsonObj represented by String
 	 */
 	private void sendObjToClient(String outgoingString){

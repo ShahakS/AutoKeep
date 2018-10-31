@@ -15,7 +15,11 @@ public class UserBLL {
 		this.interpreter = new CommunicationInterpreter();
 		this.userDAL = new UserDAL();
 	}
-	
+	/**
+	 * Change the client password
+	 * @param incomingData received by the client
+	 * @return a string contains the answer and ready to be sent to the client
+	 */
 	public String changePassword(String incomingData) {
 		String outgoingData,message;
 		UserModel user = (UserModel)interpreter.decodeFromJsonToObj(ProtocolMessage.USER_MODEL, incomingData);
@@ -33,11 +37,23 @@ public class UserBLL {
 		return outgoingData;
 	}
 
+	/**
+	 * Retrieve the UserModel of that email address
+	 * @param emailAddress
+	 * @return UserModel
+	 * @throws SQLException
+	 */
 	public UserModel getUserModel(String emailAddress) throws SQLException {
 		UserModel userModel = userDAL.getUser(emailAddress);
 		return userModel;
 	}
 
+	/**
+	 * Preparing to close the connection
+	 * @param sessionManager the session manager instance
+	 * @param emailAddress the client's email address
+	 * @param clientSocket the client's socket
+	 */
 	public void disconnect(SessionManager sessionManager,String emailAddress, Socket clientSocket) {			
 		sessionManager.closeSession(emailAddress,clientSocket);			
 	}
