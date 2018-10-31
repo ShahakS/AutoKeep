@@ -1,10 +1,13 @@
 package ReservationControl;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.Queue;
 
 import Database.DatabaseConnector;
+import UserControl.UserModel;
+import VehicleControl.VehicleModel;
 
 public class ReservationDAL {
 	private DatabaseConnector DBconnector;
@@ -35,5 +38,38 @@ public class ReservationDAL {
 		IsThereAnActiveOrder = DBconnector.callRoutineReturnedBooleanScalarValue(query, parameters);
 		
 		return IsThereAnActiveOrder;
+	}
+	
+	public Queue<ReservationModel> getReservationHistory(String emailAddress) throws SQLException {
+		String query = "SELECT * FROM fn_GetLastMonthOrdersByEmailAddress(?)";
+		Queue<Object> parameters = new LinkedList<>();
+		Queue<ReservationModel> reservations = new LinkedList<>();
+		
+		parameters.add(emailAddress);			
+		ResultSet resultSet = DBconnector.executeSqlStatementResultSet(query, parameters);
+		
+		while (resultSet.next()){
+			VehicleModel vehicle = new VehicleModel();
+			ReservationModel reservation = new ReservationModel();
+			
+			vehicle.setPlateNumber(resultSet.getString("PlateNumber"));
+			vehicle.setManufactureName(resultSet.getString("ManufactureName"));
+			vehicle.setModel(resultSet.getString("Model"));
+			vehicle.setManufactureYear(resultSet.getInt("ManufactureYear"));
+			vehicle.setSeatsNumber(resultSet.getInt("SeatsNumber"));
+			vehicle.setEngineCapacity(resultSet.getInt("EngineCapacity"));
+			vehicle.setIsUsable(resultSet.getBoolean("IsUsable"));
+			vehicle.setKilometers(resultSet.getInt("Kilometers"));
+			vehicle.setVehicleImage(resultSet.getString("VehicleImage"));
+			vehicle.setVehicleType(resultSet.getString("VehicleType"));
+			
+			reservation.setReservationID(resultSet.getInt("ReservationID"));
+			reservation.setReservationDate(resultSet.getString("OrderTime"));
+			reservation.setReservationStartDate(resultSet.getString("StartingDate"));
+			reservation.setReservationEndDate(resultSet.getString("EndingDate"));
+			reservation.setVehicle(vehicle);
+			reservations.add(reservation);			
+		}				
+		return reservations;
 	}
 }

@@ -27,6 +27,9 @@ public class VehicleModel {
 		this.vehicleImage = vehicleImage;
 	}
 
+	public VehicleModel() {
+	}
+
 	public String getPlateNumber() {
 		return plateNumber;
 	}
@@ -106,4 +109,13 @@ public class VehicleModel {
 	public void setVehicleType(String vehicleType) {
 		this.vehicleType = vehicleType;
 	}
+
+	public void setIsUsable(boolean isUsable) {
+		this.isUsable = isUsable;		
+	}
+	
+	public boolean getIsUsable() {
+		return isUsable;
+	}
+
 }

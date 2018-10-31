@@ -7,16 +7,25 @@ public enum ProtocolMessage {
 	WRONG_CREDENTIAL,
 	LOGIN,
 	USER_IS_BANNED,
+	
 	SEARCH_VEHICLE,
 	NO_AVAILABLE_VEHICLES,
+	
 	ORDER,
 	ORDER_FAILED,
 	ORDER_BOOKED_SUCCESSFULLY,
+	
 	VIEW_ORDERS,
 	ACTIVE_ORDER_ALREADY_EXISTS,
+	
+	RESERVATION_HISTORY,
+	NO_HISTORY,
+	HISTORY_RESULT,
+	
 	USER_CHANGE_PASSWORD,
 	PASSWORD_CHANGED_SUCCESSFULLY,
 	CHANGING_PASSWORD_FAILED,
+	
 	USER_MODEL,
 	RESERVATION_MODEL,
 	VEHICLE_MODEL,
@@ -76,6 +85,10 @@ public enum ProtocolMessage {
 				
 			case ACTIVE_ORDER_ALREADY_EXISTS:
 				messageString = "Can't book more then 1 vehicle at a given time.\nActive order already exists";
+				break;
+				
+			case NO_HISTORY:
+				messageString = "No reservation history from last 30 days";
 				break;
 				
 			default:

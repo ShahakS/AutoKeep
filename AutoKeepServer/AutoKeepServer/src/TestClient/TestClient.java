@@ -43,7 +43,8 @@ public class TestClient {
 				
 				if (c.getProtocolMsg(serverAnswer) == ProtocolMessage.OK) {
 					isConnected = true;
-					System.out.println(c.getProtocolMsg(serverAnswer));
+					UserModel user = (UserModel) c.decodeFromJsonToObj(ProtocolMessage.USER_MODEL, serverAnswer);
+					System.out.println("Hello "+user.getFirstName()+" "+user.getLastName());
 				}else if(c.getProtocolMsg(serverAnswer) == ProtocolMessage.USER_IS_BANNED) {
 					System.out.println(c.decodeFromJsonToObj(ProtocolMessage.USER_IS_BANNED, serverAnswer));
 					break;
@@ -112,7 +113,24 @@ public class TestClient {
 					System.out.println(c.decodeFromJsonToObj(c.getProtocolMsg(serverAnswer), serverAnswer));
 					
 				}
-				
+				{
+					String str = c.setProtocolMsg(ProtocolMessage.RESERVATION_HISTORY);
+
+					sendClientData.writeObject(str);
+					
+					serverAnswer = (String) readClientData.readObject();
+					if (c.getProtocolMsg(serverAnswer) == ProtocolMessage.HISTORY_RESULT) {
+						Queue<ReservationModel> res = (Queue<ReservationModel>) c.decodeFromJsonToObj
+								(ProtocolMessage.RESERVATION_MODEL_LIST, serverAnswer);
+					while(!res.isEmpty())
+						System.out.println(res.poll().getReservationID());					
+					}else if (c.getProtocolMsg(serverAnswer) == ProtocolMessage.NO_HISTORY) {
+						System.out.println(c.decodeFromJsonToObj(ProtocolMessage.NO_HISTORY, serverAnswer));
+					}else {
+						System.out.println(c.decodeFromJsonToObj(ProtocolMessage.ERROR, serverAnswer));
+					}
+					
+				}
 			}
 			
 			clientSocket.close();

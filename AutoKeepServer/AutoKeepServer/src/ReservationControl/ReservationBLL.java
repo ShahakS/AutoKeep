@@ -1,6 +1,7 @@
 package ReservationControl;
 
 import java.sql.SQLException;
+import java.util.Queue;
 
 import ClientServerProtocols.ProtocolMessage;
 import CommunicationManager.CommunicationInterpreter;
@@ -49,6 +50,28 @@ public class ReservationBLL {
 			String message = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);
 			outgoingData = interpreter.encodeObjToJson(ProtocolMessage.ERROR,message);
 		}
+		return outgoingData;
+	}
+
+	public String getHistory(String emailAddress) {
+		String outgoingData;
+		
+		try {
+			Queue<ReservationModel> reservationHistory = reservationDAL.getReservationHistory(emailAddress);
+			
+			if (reservationHistory.isEmpty()) {
+				ProtocolMessage protocolMessage = ProtocolMessage.NO_HISTORY;
+				String message = ProtocolMessage.getMessage(protocolMessage);
+				outgoingData = interpreter.encodeObjToJson(protocolMessage, message);
+			}
+			else {
+				outgoingData = interpreter.encodeObjToJson(ProtocolMessage.HISTORY_RESULT, reservationHistory);
+			}
+		} catch (SQLException e) {
+			new ExcaptionHandler("Exception thrown out from ReservationBLL.getHistory()", e);
+			String message = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);
+			outgoingData = interpreter.encodeObjToJson(ProtocolMessage.ERROR,message);
+		}		
 		return outgoingData;
 	}
 }

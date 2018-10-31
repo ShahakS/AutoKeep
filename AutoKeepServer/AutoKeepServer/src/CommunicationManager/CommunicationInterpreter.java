@@ -56,9 +56,11 @@ public class CommunicationInterpreter {
 		
 		try {
 			switch(protocolMsg) {
+			case OK:
 			case USER_MODEL:
 				jsonObj.add("user", gson.toJsonTree((UserModel)obj,UserModel.class));
 				return jsonObj.toString();
+				
 			case SEARCH_VEHICLE:
 			case RESERVATION_MODEL:
 				jsonObj.add("reservation", gson.toJsonTree((ReservationModel)obj,ReservationModel.class));
@@ -73,6 +75,7 @@ public class CommunicationInterpreter {
 				jsonObj.add("users", gson.toJsonTree(obj,listType));
 				return jsonObj.toString();
 				
+			case HISTORY_RESULT:
 			case RESERVATION_MODEL_LIST:
 				listType = new TypeToken<Queue<ReservationModel>>(){}.getType();
 				jsonObj.add("reservations", gson.toJsonTree(obj,listType));

@@ -80,7 +80,9 @@ public class ClientHandler implements Runnable{
 			case USER_CHANGE_PASSWORD:
 				outgoingData= userBLL.changePassword(incomingData);
 				break;
-			
+			case RESERVATION_HISTORY:
+				outgoingData= reservationBLL.getHistory(user.getEmailAddress());
+				break;
 			default:				
 		}
 
@@ -115,11 +117,7 @@ public class ClientHandler implements Runnable{
 				if (isAuthenticated) {
 					sessionManager.userLoggedIn(clientSocket,user.getEmailAddress());
 					this.user = userBLL.getUserModel(user.getEmailAddress());
-					Queue<String> keys = new LinkedList<>();
-					Queue<String> values = new LinkedList<>();
-					keys.add("user");
-					values.add("{firstName:"+user.getFirstName()+",lastName:"+user.getLastName()+"}");
-					authResponse = interpreter.encodeParametersToJson(ProtocolMessage.OK, keys, values);
+					authResponse = interpreter.encodeObjToJson(ProtocolMessage.OK,user);
 				}else if (numOfRetries == 1) {
 					sessionManager.ban(clientSocket);
 					protocolMessage = ProtocolMessage.TOO_MANY_AUTHENTICATION_RETRIES;

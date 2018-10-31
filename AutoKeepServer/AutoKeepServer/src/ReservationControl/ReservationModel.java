@@ -11,6 +11,9 @@ public class ReservationModel {
 	private String reservationStartDate;
 	private String reservationEndDate;
 	
+	public ReservationModel() {
+	}
+	
 	public ReservationModel(int reservationID, UserModel user, VehicleModel vehicle, String reservationDate,
 			String reservationStartDate, String reservationEndDate) {
 		super();
