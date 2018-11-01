@@ -120,6 +120,7 @@ public class TestClient {
 					
 					serverAnswer = (String) readClientData.readObject();
 					if (c.getProtocolMsg(serverAnswer) == ProtocolMessage.HISTORY_RESULT) {
+						@SuppressWarnings("unchecked")
 						Queue<ReservationModel> res = (Queue<ReservationModel>) c.decodeFromJsonToObj
 								(ProtocolMessage.RESERVATION_MODEL_LIST, serverAnswer);
 					while(!res.isEmpty())

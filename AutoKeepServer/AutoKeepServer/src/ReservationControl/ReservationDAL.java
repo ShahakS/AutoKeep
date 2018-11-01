@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import Database.DatabaseConnector;
-import UserControl.UserModel;
 import VehicleControl.VehicleModel;
 
 public class ReservationDAL {

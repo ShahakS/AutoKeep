@@ -1,12 +1,12 @@
 package exceptionsPackage;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -25,6 +25,10 @@ public class ExcaptionHandler{
 		this.stackTrace = getExceptionStackTrace(exception);
 		
 		writeToErrorLog();
+	}
+	
+	public ExcaptionHandler(Exception exception) {
+		writeLogToLocalMachine(exception);
 	}
 
 	private String getExceptionStackTrace(Exception exception) {
@@ -48,14 +52,23 @@ public class ExcaptionHandler{
 		try {
 			DBconnector.executeSqlStatement(query,parameters);
 		} catch (SQLException e) {
-			String fileDirectory = System.getProperty("user.dir") + "\\Error_"+LocalDate.now()+".log";
-			try {
-				try(FileWriter fileWriter = new FileWriter(fileDirectory)){
-					fileWriter.write(getExceptionStackTrace(e));
-				}				
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
+			writeLogToLocalMachine(e);
+		}
+	}
+	
+	public void writeLogToLocalMachine(Exception exception) {
+		String userDirectory = System.getProperty("user.dir");
+		new File(userDirectory+"/Logs").mkdirs();
+		String fileDirectory = userDirectory + "\\Logs\\Error_"+System.currentTimeMillis()+".log";
+		try {
+			try(FileWriter fileWriter = new FileWriter(fileDirectory)){
+				StringWriter stringWriter = new StringWriter();
+				PrintWriter printWriter = new PrintWriter(stringWriter);
+				exception.printStackTrace(printWriter);
+				fileWriter.write(stringWriter.toString());
+			}				
+		} catch (IOException e1) {
+			e1.printStackTrace();
 		}
 	}
 }

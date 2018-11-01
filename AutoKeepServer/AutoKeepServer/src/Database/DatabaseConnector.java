@@ -30,12 +30,8 @@ public class DatabaseConnector {
 			//Set Automatic commit as ON
 			DBConnection.setAutoCommit(true);
 			
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}catch(SQLException e){
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (ClassNotFoundException | SQLException e) {
+			new ExcaptionHandler(e);
 		}
 	}
 	
@@ -44,8 +40,10 @@ public class DatabaseConnector {
 	 * @return The DatabaseConnector instance
 	 */
 	public static synchronized DatabaseConnector getDbConnectorInstance(){
+		if (DBConnector.DBConnection == null)
+			return null;		
 		return DBConnector;
-	}	
+	}
 	
 	/**
 	 * The method execute a query without returned value
