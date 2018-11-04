@@ -15,6 +15,14 @@ import VehicleControl.VehicleModel;
 //test
 public class TestClient {
 	
+	/**
+	 * @param args
+	 * @throws InterruptedException
+	 */
+	/**
+	 * @param args
+	 * @throws InterruptedException
+	 */
 	public static void main(String[] args) throws InterruptedException {
 		ObjectInputStream readClientData = null;
 		ObjectOutputStream sendClientData = null;
@@ -130,7 +138,7 @@ public class TestClient {
 					}else {
 						System.out.println(c.decodeFromJsonToObj(ProtocolMessage.ERROR, serverAnswer));
 					}
-					
+					Thread.currentThread().sleep(100000);
 				}
 			}
 			

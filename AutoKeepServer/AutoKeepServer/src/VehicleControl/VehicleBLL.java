@@ -30,7 +30,7 @@ public class VehicleBLL {
 					reqReservation.getVehicle().getVehicleType(),
 					reqReservation.getVehicle().getSeatsNumber());
 		
-			if (vehiclesResults == null) {
+			if (vehiclesResults.isEmpty()) {
 				ProtocolMessage protocolMessage = ProtocolMessage.NO_AVAILABLE_VEHICLES;
 				String message = ProtocolMessage.getMessage(protocolMessage);
 				outgoingData = interpreter.encodeObjToJson(protocolMessage, message);

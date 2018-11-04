@@ -4,15 +4,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.sql.SQLException;
 
 import ClientServerProtocols.ProtocolMessage;
 import CommunicationManager.CommunicationInterpreter;
 import ReservationControl.ReservationBLL;
-import SessionControl.SessionManager;
 import UserControl.UserBLL;
-import UserControl.UserDAL;
-import UserControl.UserModel;
 import VehicleControl.VehicleBLL;
 import exceptionsPackage.ExcaptionHandler;
 
@@ -21,16 +17,13 @@ public class ClientHandler implements Runnable{
 	private CommunicationInterpreter interpreter;
 	private ObjectInputStream readClientData;
 	private ObjectOutputStream sendClientData;
-	private SessionManager sessionManager;
-	private UserModel user;
 	private UserBLL userBLL;
 	private VehicleBLL vehicleBLL;
 	private ReservationBLL reservationBLL;
+	public static final int connectionRetries = 5;
 	
 	public ClientHandler(Socket socket) throws IOException{
 		System.out.println("Connected");
-		this.sessionManager = SessionManager.startSession();
-		this.user = new UserModel();
 		this.userBLL = new UserBLL();
 		this.vehicleBLL = new VehicleBLL();
 		this.reservationBLL = new ReservationBLL();
@@ -61,7 +54,7 @@ public class ClientHandler implements Runnable{
 				}
 			}
 		}
-		userBLL.disconnect(sessionManager,user.getEmailAddress(),clientSocket);
+		userBLL.disconnect(clientSocket);
 		System.out.println("Disconnected");
 	}
 
@@ -73,13 +66,13 @@ public class ClientHandler implements Runnable{
 				outgoingData = vehicleBLL.searchVehicle(incomingData); 
 				break;
 			case ORDER:
-				outgoingData = reservationBLL.order(incomingData,user.getEmailAddress()); 
+				outgoingData = reservationBLL.order(incomingData,userBLL.user.getEmailAddress()); 
 				break;
 			case USER_CHANGE_PASSWORD:
 				outgoingData= userBLL.changePassword(incomingData);
 				break;
 			case RESERVATION_HISTORY:
-				outgoingData= reservationBLL.getHistory(user.getEmailAddress());
+				outgoingData= reservationBLL.getHistory(userBLL.user.getEmailAddress());
 				break;
 			default:				
 		}
@@ -92,47 +85,35 @@ public class ClientHandler implements Runnable{
 	 * @return true if credential is passed else returns false
 	 */
 	private boolean connect() {
-		UserDAL userDAL = new UserDAL();
 		boolean isAuthenticated = false;
-		String authResponse;
+		String isBanned = userBLL.isBanned(clientSocket);
 		
-		if (sessionManager.isBanned(clientSocket)) {
-			ProtocolMessage protocolMsg = ProtocolMessage.USER_IS_BANNED;
-			String customMsg = ProtocolMessage.getMessage(protocolMsg,sessionManager.getRemainingBanTime(clientSocket));
-			String errorJsonString = interpreter.encodeObjToJson(protocolMsg,customMsg);
-			sendObjToClient(errorJsonString);
-			return false;
-		}
-		
-		for(int numOfRetries = 5;!isAuthenticated && numOfRetries > 0;numOfRetries--) {
-			try {
-				String clientCredential = readClientData();
-				user = (UserModel)interpreter.decodeFromJsonToObj(ProtocolMessage.USER_MODEL,clientCredential);
-
-				isAuthenticated = userDAL.isUserCredentialValid(user);
-				ProtocolMessage protocolMessage;
-				
-				if (isAuthenticated) {
-					sessionManager.userLoggedIn(clientSocket,user.getEmailAddress());
-					this.user = userBLL.getUserModel(user.getEmailAddress());
-					authResponse = interpreter.encodeObjToJson(ProtocolMessage.OK,user);
-				}else if (numOfRetries == 1) {
-					sessionManager.ban(clientSocket);
-					protocolMessage = ProtocolMessage.TOO_MANY_AUTHENTICATION_RETRIES;
-					authResponse = interpreter.encodeObjToJson(protocolMessage,ProtocolMessage.getMessage(protocolMessage));
-				}else{
-					 protocolMessage = ProtocolMessage.WRONG_CREDENTIAL;
-					 authResponse = interpreter.encodeObjToJson(protocolMessage,ProtocolMessage.getMessage(protocolMessage));		
-				}				
-				sendObjToClient(authResponse);				
-			} catch (ClassNotFoundException | SQLException e) {
-				new ExcaptionHandler("Exception while authenticate user", e);
-				String errorMsg = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);
-				String errorJsonString = interpreter.encodeObjToJson(ProtocolMessage.ERROR,errorMsg);
-				sendObjToClient(errorJsonString);				
-			} catch (IOException e) {
-				//Connection closed
-				return false;
+		if(isBanned != null) //null = user isn't banned
+			sendObjToClient(isBanned);
+		else {
+			for(int numOfRetries = connectionRetries;!isAuthenticated && numOfRetries > 0;numOfRetries--) {
+				try {
+					String clientCredential = readClientData();
+					String outputData = userBLL.authenticate(clientCredential, clientSocket);
+					sendObjToClient(outputData);
+					
+					ProtocolMessage protocolMessage = interpreter.getProtocolMsg(outputData);
+					
+					if (protocolMessage == ProtocolMessage.OK) {
+						isAuthenticated = true;
+					}					
+					else if(protocolMessage == ProtocolMessage.USER_ALREADY_CONNECTED)
+						return false;
+					
+				} catch (ClassNotFoundException e) {
+					new ExcaptionHandler("Exception connecting to server. Thrown by connect()", e);
+					String errorMsg = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);
+					String errorJsonString = interpreter.encodeObjToJson(ProtocolMessage.ERROR,errorMsg);
+					sendObjToClient(errorJsonString);				
+				} catch (IOException e) {
+					//Connection closed by the client
+					return false;
+				}
 			}
 		}
 		return isAuthenticated;

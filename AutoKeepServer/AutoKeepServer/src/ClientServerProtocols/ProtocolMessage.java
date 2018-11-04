@@ -7,6 +7,7 @@ public enum ProtocolMessage {
 	WRONG_CREDENTIAL,
 	LOGIN,
 	USER_IS_BANNED,
+	USER_ALREADY_CONNECTED,
 	
 	SEARCH_VEHICLE,
 	NO_AVAILABLE_VEHICLES,
@@ -35,8 +36,9 @@ public enum ProtocolMessage {
 	//Error Messages - Except ERROR all other error used for messages only
 	ERROR,
 	TOO_MANY_AUTHENTICATION_RETRIES,	
-	INTERNAL_ERROR;
-
+	INTERNAL_ERROR,
+	WRONG_PROTOCOL_REQUEST;
+	
 	public static String getMessage(ProtocolMessage protocolMessage,String ...customMessage) {
 		String messageString;
 	
@@ -54,8 +56,12 @@ public enum ProtocolMessage {
 														+SessionManager.BAN_DURATION + " seconds";
 				break;
 				
+			case USER_ALREADY_CONNECTED:
+				messageString = "User already connected to the system in other device";
+				break;
+				
 			case NO_AVAILABLE_VEHICLES:
-				messageString = "There is no available vehicles for correct parameters";
+				messageString = "There is no available vehicles for current parameters";
 				break;
 				
 			case INTERNAL_ERROR:
@@ -89,6 +95,10 @@ public enum ProtocolMessage {
 				
 			case NO_HISTORY:
 				messageString = "No reservation history from last 30 days";
+				break;
+				
+			case WRONG_PROTOCOL_REQUEST:
+				messageString = "Wrong Protocol request received";
 				break;
 				
 			default:

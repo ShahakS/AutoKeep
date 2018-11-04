@@ -19,7 +19,7 @@ public class SessionManager {
 	private static SessionManager sessionManager = new SessionManager();
 	private ArrayList<SessionModel> sessions;
 	private Map<String,String> blockedIps;
-	public static final long BAN_DURATION = 30; 
+	public static final long BAN_DURATION = 60; 
 	
 	private SessionManager() {
 		sessions = new ArrayList<>();
@@ -158,6 +158,13 @@ public class SessionManager {
 		String connectionTime = getCurrentTime();	
 		SessionModel sessionModel = new SessionModel(emailAddress,connectionTime,ipAddress);
 		sessions.add(sessionModel);		
+	}
+	
+	public boolean isConnected(String emailAddress) throws SQLException {
+		for(SessionModel session : sessions)	
+			if (session.getConnectedUser().equals(emailAddress))
+				return true;
+		return false;	
 	}
 
 	/**
