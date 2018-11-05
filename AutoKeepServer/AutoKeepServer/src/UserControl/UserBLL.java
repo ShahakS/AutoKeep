@@ -2,6 +2,7 @@ package UserControl;
 
 import java.net.Socket;
 import java.sql.SQLException;
+import java.util.Queue;
 
 import ClientServerProtocols.ProtocolMessage;
 import CommunicationManager.CommunicationInterpreter;
@@ -22,6 +23,7 @@ public class UserBLL {
 		this.userDAL = new UserDAL();
 		this.sessionManager = SessionManager.startSession();;
 	}
+	
 	/**
 	 * Change the client password
 	 * @param incomingData received by the client
@@ -121,5 +123,80 @@ public class UserBLL {
 	 */
 	public void ban(Socket clientSocket) {
 		sessionManager.ban(clientSocket);		
+	}
+	
+	public String getUsers() {
+		String outputData;
+		
+		try {
+			Queue<UserModel> usersList = userDAL.getActiveUsers();
+			outputData = interpreter.encodeObjToJson(ProtocolMessage.USER_MODEL_LIST, usersList);			
+		} catch (SQLException e) {
+			new ExcaptionHandler("Exception getting users list.Thrown by getUsers()", e);
+			String message = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);
+			outputData = interpreter.encodeObjToJson(ProtocolMessage.ERROR,message);	
+		}
+		return outputData;
+	}
+	
+	public String creatNewUser(String incomingData) {
+		String outputData;
+		
+		try {
+			UserModel newUser = (UserModel) interpreter.decodeFromJsonToObj(ProtocolMessage.USER_MODEL, incomingData);
+			boolean isSucceeded = userDAL.insertNewUser(newUser);
+			
+			if (isSucceeded) {
+				String message = ProtocolMessage.getMessage(ProtocolMessage.USER_CREATED_SUCCESSFULLY,newUser.getEmailAddress());
+				outputData = interpreter.encodeObjToJson(ProtocolMessage.USER_CREATED_SUCCESSFULLY,message);
+			}
+			else {
+				String message = ProtocolMessage.getMessage(ProtocolMessage.EMAIL_ADDRESS_ALREADY_REGISTERED,newUser.getEmailAddress());
+				outputData = interpreter.encodeObjToJson(ProtocolMessage.EMAIL_ADDRESS_ALREADY_REGISTERED,message);
+			}			
+		} catch (SQLException e) {
+			new ExcaptionHandler("Exception Creating a new user.Thrown by creatNewUser()", e);
+			String message = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);
+			outputData = interpreter.encodeObjToJson(ProtocolMessage.ERROR,message);	
+		}
+		return outputData;
+	}
+	
+	/**
+	 * Delete the user by email address
+	 * @param incomingData
+	 * @return 
+	 */
+	public String deleteUser(String incomingData) {
+		String outputData;
+		
+		try {
+			UserModel user = (UserModel) interpreter.decodeFromJsonToObj(ProtocolMessage.USER_MODEL, incomingData);
+			userDAL.deleteUserByEmail(user.getEmailAddress());
+			
+			String message = ProtocolMessage.getMessage(ProtocolMessage.USER_DELETED_SUCCESSFULLY,user.getEmailAddress());
+			outputData = interpreter.encodeObjToJson(ProtocolMessage.USER_DELETED_SUCCESSFULLY,message);			
+		} catch (SQLException e) {
+			new ExcaptionHandler("Exception deleting user.Thrown by deleteUser()", e);
+			String message = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);
+			outputData = interpreter.encodeObjToJson(ProtocolMessage.ERROR,message);	
+		}
+		return outputData;
+	}
+	public String updateUser(String incomingData) {
+		String outputData;
+		
+		try {
+			UserModel user = (UserModel) interpreter.decodeFromJsonToObj(ProtocolMessage.USER_MODEL, incomingData);
+			userDAL.updateUser(user);
+			//TODO
+			String message = ProtocolMessage.getMessage(ProtocolMessage.USER_UPDATED_SUCCESSFULLY,user.getEmailAddress());
+			outputData = interpreter.encodeObjToJson(ProtocolMessage.USER_UPDATED_SUCCESSFULLY,message);			
+		} catch (SQLException e) {
+			new ExcaptionHandler("Exception Updating user.Thrown by updateUser()", e);
+			String message = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);
+			outputData = interpreter.encodeObjToJson(ProtocolMessage.ERROR,message);	
+		}
+		return outputData;
 	}
 }

@@ -37,28 +37,73 @@ public class ClientHandler implements Runnable{
 		boolean isConnected = true;
 		boolean isAuthenticated = connect();
 		
-		if (isAuthenticated) {			
-			while(isConnected) {
-				try {
-					String incomingData = (String) readClientData.readObject();
-					String OutgoingData = businessLogicFlow(incomingData);					
-					sendObjToClient(OutgoingData);
-					
-				}catch (IOException e) {
-					isConnected = false;
-				}catch (ClassNotFoundException e) {
-					new ExcaptionHandler("Exception Thrown by ClientHandler while casting",e);
-					String errorMsg = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);
-					String errorJsonString = interpreter.encodeObjToJson(ProtocolMessage.ERROR,errorMsg);
-					sendObjToClient(errorJsonString);	
+		if (isAuthenticated) {	
+			if(userBLL.user.IsAdministrator()) {
+				while(isConnected) {
+					try {
+						String incomingData = (String) readClientData();
+						String OutgoingData = adminBusinessLogicFlow(incomingData);	
+						System.out.println(incomingData+"\n\n"+OutgoingData);
+						sendObjToClient(OutgoingData);
+						
+					}catch (IOException e) {
+						isConnected = false;
+					}catch (ClassNotFoundException e) {
+						new ExcaptionHandler("Exception Thrown by ClientHandler while casting",e);
+						String errorMsg = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);
+						String errorJsonString = interpreter.encodeObjToJson(ProtocolMessage.ERROR,errorMsg);
+						sendObjToClient(errorJsonString);	
+					}
 				}
-			}
+			}else {
+				while(isConnected) {
+					try {
+						String incomingData = (String) readClientData();
+						String OutgoingData = userBusinessLogicFlow(incomingData);	
+						sendObjToClient(OutgoingData);						
+					}catch (IOException e) {
+						isConnected = false;
+					}catch (ClassNotFoundException e) {
+						new ExcaptionHandler("Exception Thrown by ClientHandler while casting",e);
+						String errorMsg = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);
+						String errorJsonString = interpreter.encodeObjToJson(ProtocolMessage.ERROR,errorMsg);
+						sendObjToClient(errorJsonString);	
+					}
+				}
+			}		
 		}
 		userBLL.disconnect(clientSocket);
 		System.out.println("Disconnected");
 	}
 
-	public String businessLogicFlow(String incomingData) {
+	public String adminBusinessLogicFlow(String incomingData) {
+		String outgoingData = null;
+			
+		switch(interpreter.getProtocolMsg(incomingData)) {
+			case USERS_LIST:
+				outgoingData = userBLL.getUsers();
+				break;
+				
+			case CREATE_NEW_USER:
+				outgoingData = userBLL.creatNewUser(incomingData);
+				break;
+				
+			case DELETE_USER:
+				outgoingData = userBLL.deleteUser(incomingData);
+				break;
+				
+			case UPDATE_USER:
+				outgoingData = userBLL.updateUser(incomingData);
+				break;
+				
+			default:
+				outgoingData = userBusinessLogicFlow(incomingData);
+				break;
+		}
+		return outgoingData;
+	}	
+	
+	public String userBusinessLogicFlow(String incomingData) {
 		String outgoingData = null;
 			
 		switch(interpreter.getProtocolMsg(incomingData)) {
@@ -74,9 +119,10 @@ public class ClientHandler implements Runnable{
 			case RESERVATION_HISTORY:
 				outgoingData= reservationBLL.getHistory(userBLL.user.getEmailAddress());
 				break;
-			default:				
+			default:
+				String message = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);
+				outgoingData = interpreter.encodeObjToJson(ProtocolMessage.ERROR,message);
 		}
-
 		return outgoingData;
 	}	
 	

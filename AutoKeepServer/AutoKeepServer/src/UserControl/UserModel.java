@@ -1,5 +1,6 @@
 package UserControl;
 public class UserModel {
+	private int userID;
 	private String emailAddress;
 	private String password;
 	private String dateOfBirth;
@@ -7,6 +8,19 @@ public class UserModel {
 	private String lastName;
 	private String phoneNumber;
 	private boolean IsAdministrator = false;
+	
+	public UserModel(int userID,String emailAddress,String password, String dateOfBirth, String firstName, String lastName,
+			String phoneNumber, boolean IsAdministrator) {
+		super();
+		this.password = password;
+		this.dateOfBirth = dateOfBirth;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.emailAddress = emailAddress;
+		this.phoneNumber = phoneNumber;
+		this.IsAdministrator = IsAdministrator;
+		this.userID = userID;
+	}
 	
 	public UserModel(String emailAddress,String password, String dateOfBirth, String firstName, String lastName,
 			String phoneNumber, boolean IsAdministrator) {
@@ -73,5 +87,9 @@ public class UserModel {
 
 	public boolean IsAdministrator() {
 		return IsAdministrator;
+	}
+
+	public int getUserID() {
+		return userID;
 	}
 }

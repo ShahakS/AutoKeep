@@ -29,14 +29,14 @@ public class TestClient {
 		
 		try {
 
-			Socket clientSocket = new Socket("localhost", 40501);
+			Socket clientSocket = new Socket("shahak18.ddns.net", 40500);
 			
 			sendClientData = new ObjectOutputStream(clientSocket.getOutputStream());
 			readClientData = new ObjectInputStream(clientSocket.getInputStream());
 			
 			CommunicationInterpreter c = new CommunicationInterpreter();
 			String serverAnswer;
-			int numOfRetries = 5;
+			//int numOfRetries = 5;
 			boolean isConnected = false;
 			String email = "shahak.shaked@gmail.com";
 			//connect
@@ -48,7 +48,7 @@ public class TestClient {
 				String str = c.encodeParametersToJson(ProtocolMessage.LOGIN, keys, values);
 				sendClientData.writeObject(str);
 				serverAnswer = (String) readClientData.readObject();
-				
+				System.out.println(c.getProtocolMsg(serverAnswer));
 				if (c.getProtocolMsg(serverAnswer) == ProtocolMessage.OK) {
 					isConnected = true;
 					UserModel user = (UserModel) c.decodeFromJsonToObj(ProtocolMessage.USER_MODEL, serverAnswer);
@@ -58,10 +58,12 @@ public class TestClient {
 					break;
 				}else if(c.getProtocolMsg(serverAnswer) == ProtocolMessage.TOO_MANY_AUTHENTICATION_RETRIES) {
 					System.out.println(c.decodeFromJsonToObj(ProtocolMessage.TOO_MANY_AUTHENTICATION_RETRIES, serverAnswer));
+				}else if (c.getProtocolMsg(serverAnswer) == ProtocolMessage.USER_ALREADY_CONNECTED) {
+					break;
 				}
 				
-				numOfRetries--;
-			}while((!(c.getProtocolMsg(serverAnswer)).equals(ProtocolMessage.OK)) && numOfRetries>0);
+				//numOfRetries--;
+			}while((!(c.getProtocolMsg(serverAnswer)).equals(ProtocolMessage.OK)));
 			
 			if (isConnected) {
 				{
@@ -79,10 +81,11 @@ public class TestClient {
 				}else if(c.getProtocolMsg(serverAnswer) == ProtocolMessage.CHANGING_PASSWORD_FAILED) {
 					System.out.println(c.decodeFromJsonToObj(ProtocolMessage.CHANGING_PASSWORD_FAILED, serverAnswer));
 				}
+				
 				}
 				{
 				//get available vehicles
-				UserModel user = new UserModel("sad", "", "", "", "", "", true);
+				UserModel user = new UserModel(10011,"sad", "", "", "", "", "", true);
 				VehicleModel vehicle = new VehicleModel("1", "", "", "FAMILY", 6, 5, 1600, true, 213033, "");
 				ReservationModel r = new ReservationModel(1, user, vehicle, "2018-09-09", "2018-11-09", "2018-11-09");
 				Queue<String> keys = new LinkedList<>();
@@ -104,7 +107,7 @@ public class TestClient {
 				{
 					Queue<String> keys = new LinkedList<>();
 					Queue<String> values = new LinkedList<>();
-					UserModel user = new UserModel("sad", "", "", "", "", "", true);
+					UserModel user = new UserModel(234567,"sad", "", "", "", "", "", true);
 					VehicleModel vehicle = new VehicleModel("68-345-79", "", "", "FAMILY", 6, 5, 1600, true, 213033, "");
 					ReservationModel r = new ReservationModel(1, user, vehicle, "2018-09-09", "2018-11-09", "2018-11-09");
 					keys.add("reservation");
@@ -138,7 +141,7 @@ public class TestClient {
 					}else {
 						System.out.println(c.decodeFromJsonToObj(ProtocolMessage.ERROR, serverAnswer));
 					}
-					Thread.currentThread().sleep(100000);
+					//Thread.currentThread().sleep(1000000);
 				}
 			}
 			

@@ -26,6 +26,14 @@ public enum ProtocolMessage {
 	USER_CHANGE_PASSWORD,
 	PASSWORD_CHANGED_SUCCESSFULLY,
 	CHANGING_PASSWORD_FAILED,
+	CREATE_NEW_USER,
+	USER_CREATED_SUCCESSFULLY,
+	EMAIL_ADDRESS_ALREADY_REGISTERED,
+	USERS_LIST,
+	DELETE_USER,
+	USER_DELETED_SUCCESSFULLY,
+	USER_UPDATED_SUCCESSFULLY,
+	UPDATE_USER,
 	
 	USER_MODEL,
 	RESERVATION_MODEL,
@@ -39,7 +47,7 @@ public enum ProtocolMessage {
 	INTERNAL_ERROR,
 	WRONG_PROTOCOL_REQUEST;
 	
-	public static String getMessage(ProtocolMessage protocolMessage,String ...customMessage) {
+	public static String getMessage(ProtocolMessage protocolMessage,String ...args) {
 		String messageString;
 	
 		switch (protocolMessage) {
@@ -70,7 +78,7 @@ public enum ProtocolMessage {
 				
 			case USER_IS_BANNED:
 				messageString = "You have been banned due to a large number of login attempts\n"
-								+ "Please try again in " +customMessage[0]+ " seconds";
+								+ "Please try again in " +args[0]+ " seconds";
 				break;
 				
 			case PASSWORD_CHANGED_SUCCESSFULLY:
@@ -99,6 +107,22 @@ public enum ProtocolMessage {
 				
 			case WRONG_PROTOCOL_REQUEST:
 				messageString = "Wrong Protocol request received";
+				break;
+				
+			case USER_CREATED_SUCCESSFULLY:
+				messageString = "The user "+ args[0] +" has been created successfully";
+				break;
+				
+			case EMAIL_ADDRESS_ALREADY_REGISTERED:
+				messageString = args[0] +" already registered as a user";
+				break;
+				
+			case USER_DELETED_SUCCESSFULLY:
+				messageString = "The user "+ args[0] +" has been deleted successfully";
+				break;
+				
+			case USER_UPDATED_SUCCESSFULLY:
+				messageString = "The user "+ args[0] +" has been updated successfully";
 				break;
 				
 			default:
