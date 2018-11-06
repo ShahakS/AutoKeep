@@ -134,6 +134,10 @@ public enum ProtocolMessage {
 				messageString = "The vehicle "+ args[0] +" has been deleted successfully";
 				break;
 				
+			case VEHICLE_UPDATED_SUCCESSFULLY:
+				messageString = "The vehicle "+ args[0] +" has been updated successfully";
+				break;
+				
 			default:
 				messageString = "Protocol Message case is not defined";
 		}		
