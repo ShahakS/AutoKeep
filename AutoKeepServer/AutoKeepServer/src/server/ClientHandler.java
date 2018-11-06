@@ -37,40 +37,30 @@ public class ClientHandler implements Runnable{
 		boolean isConnected = true;
 		boolean isAuthenticated = connect();
 		
-		if (isAuthenticated) {	
-			if(userBLL.user.IsAdministrator()) {
-				while(isConnected) {
-					try {
+		if (isAuthenticated) {
+			try {
+				if(userBLL.user.IsAdministrator()) {
+					while(isConnected) {
 						String incomingData = (String) readClientData();
 						String OutgoingData = adminBusinessLogicFlow(incomingData);	
-						System.out.println(incomingData+"\n\n"+OutgoingData);
+						System.out.println("incoming Data: "+incomingData+"\n\nOutgoingData: "+OutgoingData);
 						sendObjToClient(OutgoingData);
-						
-					}catch (IOException e) {
-						isConnected = false;
-					}catch (ClassNotFoundException e) {
-						new ExcaptionHandler("Exception Thrown by ClientHandler while casting",e);
-						String errorMsg = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);
-						String errorJsonString = interpreter.encodeObjToJson(ProtocolMessage.ERROR,errorMsg);
-						sendObjToClient(errorJsonString);	
 					}
-				}
-			}else {
-				while(isConnected) {
-					try {
+				}else {
+					while(isConnected) {
 						String incomingData = (String) readClientData();
 						String OutgoingData = userBusinessLogicFlow(incomingData);	
 						sendObjToClient(OutgoingData);						
-					}catch (IOException e) {
-						isConnected = false;
-					}catch (ClassNotFoundException e) {
-						new ExcaptionHandler("Exception Thrown by ClientHandler while casting",e);
-						String errorMsg = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);
-						String errorJsonString = interpreter.encodeObjToJson(ProtocolMessage.ERROR,errorMsg);
-						sendObjToClient(errorJsonString);	
 					}
 				}
-			}		
+			}catch (IOException e) {
+				isConnected = false;
+			}catch (ClassNotFoundException e) {
+				new ExcaptionHandler("Exception Thrown by ClientHandler while casting",e);
+				String errorMsg = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);
+				String errorJsonString = interpreter.encodeObjToJson(ProtocolMessage.ERROR,errorMsg);
+				sendObjToClient(errorJsonString);	
+			}
 		}
 		userBLL.disconnect(clientSocket);
 		System.out.println("Disconnected");
@@ -94,6 +84,18 @@ public class ClientHandler implements Runnable{
 				
 			case UPDATE_USER:
 				outgoingData = userBLL.updateUser(incomingData);
+				break;
+				
+			case VEHICLES_LIST:
+				outgoingData = vehicleBLL.getVehicles();
+				break;
+				
+			case DELETE_VEHICLE:
+				outgoingData = vehicleBLL.deleteVehicle(incomingData);
+				break;
+				
+			case UPDATE_VEHICLE:
+				outgoingData = vehicleBLL.updateVehicle(incomingData);
 				break;
 				
 			default:

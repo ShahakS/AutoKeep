@@ -11,6 +11,11 @@ public enum ProtocolMessage {
 	
 	SEARCH_VEHICLE,
 	NO_AVAILABLE_VEHICLES,
+	VEHICLES_LIST,
+	DELETE_VEHICLE,
+	VEHICLE_DELETED_SUCCESSFULLY,
+	UPDATE_VEHICLE,
+	VEHICLE_UPDATED_SUCCESSFULLY,
 	
 	ORDER,
 	ORDER_FAILED,
@@ -123,6 +128,10 @@ public enum ProtocolMessage {
 				
 			case USER_UPDATED_SUCCESSFULLY:
 				messageString = "The user "+ args[0] +" has been updated successfully";
+				break;
+				
+			case VEHICLE_DELETED_SUCCESSFULLY:
+				messageString = "The vehicle "+ args[0] +" has been deleted successfully";
 				break;
 				
 			default:

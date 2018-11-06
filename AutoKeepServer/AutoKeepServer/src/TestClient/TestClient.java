@@ -141,7 +141,7 @@ public class TestClient {
 					}else {
 						System.out.println(c.decodeFromJsonToObj(ProtocolMessage.ERROR, serverAnswer));
 					}
-					//Thread.currentThread().sleep(1000000);
+					Thread.currentThread().sleep(1000000);
 				}
 			}
 			

@@ -70,11 +70,11 @@ public class UserBLL {
 					ban(clientSocket);
 					protocolMessage = ProtocolMessage.TOO_MANY_AUTHENTICATION_RETRIES;
 					outputData = interpreter.encodeObjToJson(protocolMessage,ProtocolMessage.getMessage(protocolMessage));
-					connectionRetries--;
 				}else{
 					 protocolMessage = ProtocolMessage.WRONG_CREDENTIAL;
 					 outputData = interpreter.encodeObjToJson(protocolMessage,ProtocolMessage.getMessage(protocolMessage));		
 				}
+				connectionRetries--;
 			}
 		} catch (SQLException e) {
 			new ExcaptionHandler("Exception authenticate user.Thrown by authenticate()", e);
@@ -183,6 +183,7 @@ public class UserBLL {
 		}
 		return outputData;
 	}
+	
 	public String updateUser(String incomingData) {
 		String outputData;
 		
