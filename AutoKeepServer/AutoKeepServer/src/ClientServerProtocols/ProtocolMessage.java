@@ -16,6 +16,9 @@ public enum ProtocolMessage {
 	VEHICLE_DELETED_SUCCESSFULLY,
 	UPDATE_VEHICLE,
 	VEHICLE_UPDATED_SUCCESSFULLY,
+	CREATE_NEW_VEHICLE,
+	VEHICLE_CREATED_SUCCESSFULLY,
+	VEHICLE_ALREADY_EXIST,
 	
 	ORDER,
 	ORDER_FAILED,
@@ -136,6 +139,14 @@ public enum ProtocolMessage {
 				
 			case VEHICLE_UPDATED_SUCCESSFULLY:
 				messageString = "The vehicle "+ args[0] +" has been updated successfully";
+				break;
+				
+			case VEHICLE_CREATED_SUCCESSFULLY:
+				messageString = "The vehicle "+ args[0] +" has been created successfully";
+				break;
+				
+			case VEHICLE_ALREADY_EXIST:
+				messageString = "Plate number "+args[0] +" is already exists in the database";
 				break;
 				
 			default:

@@ -94,5 +94,28 @@ public class VehicleBLL {
 		}
 		return outputData;
 	}
+
+	public String creatNewVehicle(String incomingData) {
+	String outputData;
+		
+		try {
+			VehicleModel newVehicle = (VehicleModel) interpreter.decodeFromJsonToObj(ProtocolMessage.VEHICLE_MODEL, incomingData);
+			boolean isSucceeded = vehicleDAL.insertNewVehicle(newVehicle);
+			
+			if (isSucceeded) {
+				String message = ProtocolMessage.getMessage(ProtocolMessage.VEHICLE_CREATED_SUCCESSFULLY,newVehicle.getPlateNumber());
+				outputData = interpreter.encodeObjToJson(ProtocolMessage.VEHICLE_CREATED_SUCCESSFULLY,message);
+			}
+			else {
+				String message = ProtocolMessage.getMessage(ProtocolMessage.VEHICLE_ALREADY_EXIST,newVehicle.getPlateNumber());
+				outputData = interpreter.encodeObjToJson(ProtocolMessage.VEHICLE_ALREADY_EXIST,message);
+			}			
+		} catch (SQLException e) {
+			new ExcaptionHandler("Exception Creating a new user.Thrown by creatNewUser()", e);
+			String message = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);
+			outputData = interpreter.encodeObjToJson(ProtocolMessage.ERROR,message);	
+		}
+		return outputData;
+	}
 	
 }

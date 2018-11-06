@@ -42,8 +42,9 @@ public class ClientHandler implements Runnable{
 				if(userBLL.user.IsAdministrator()) {
 					while(isConnected) {
 						String incomingData = (String) readClientData();
+						System.out.println("incoming Data: "+incomingData);
 						String OutgoingData = adminBusinessLogicFlow(incomingData);	
-						System.out.println("incoming Data: "+incomingData+"\n\nOutgoingData: "+OutgoingData);
+						System.out.println("\nOutgoingData: "+OutgoingData);
 						sendObjToClient(OutgoingData);
 					}
 				}else {
@@ -88,6 +89,10 @@ public class ClientHandler implements Runnable{
 				
 			case VEHICLES_LIST:
 				outgoingData = vehicleBLL.getVehicles();
+				break;
+				
+			case CREATE_NEW_VEHICLE:
+				outgoingData = vehicleBLL.creatNewVehicle(incomingData);
 				break;
 				
 			case DELETE_VEHICLE:

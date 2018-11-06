@@ -110,4 +110,23 @@ public class VehicleDAL {
 		DBconnector.executeSqlStatement(query, parameters);	
 		
 	}
+
+	public boolean insertNewVehicle(VehicleModel newVehicle) throws SQLException {
+		String query = "{?= call sp_InsertNewVehicle(?, ?, ?, ?, ?, ?, ?,?,?,?)}";
+		Queue<Object> parameters = new LinkedList<>();
+
+		parameters.add(newVehicle.getPlateNumber());
+		parameters.add(newVehicle.getManufactureName());
+		parameters.add(newVehicle.getModel());
+		parameters.add(newVehicle.getManufactureYear());
+		parameters.add(newVehicle.getSeatsNumber());
+		parameters.add(newVehicle.getEngineCapacity());
+		parameters.add(newVehicle.getIsUsable());
+		parameters.add(newVehicle.getKilometers());
+		parameters.add(newVehicle.getVehicleImage());
+		parameters.add(newVehicle.getVehicleType());
+		boolean isAddedSuccessfully = DBconnector.callRoutineReturnedBooleanScalarValue(query, parameters);
+		
+		return isAddedSuccessfully;
+	}
 }
