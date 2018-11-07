@@ -52,7 +52,12 @@ public class VehicleBLL {
 		
 		try {
 			Queue<VehicleModel> vehiclesList = vehicleDAL.getAllVehicles();
-			outputData = interpreter.encodeObjToJson(ProtocolMessage.VEHICLE_MODEL_LIST, vehiclesList);			
+			if (vehiclesList.isEmpty()) {
+				ProtocolMessage protocolMsg = ProtocolMessage.NO_VEHICLES;
+				outputData = interpreter.encodeObjToJson(protocolMsg, ProtocolMessage.getMessage(protocolMsg));
+			}else
+				outputData = interpreter.encodeObjToJson(ProtocolMessage.VEHICLE_MODEL_LIST, vehiclesList);
+			
 		} catch (SQLException e) {
 			new ExcaptionHandler("Exception getting users list.Thrown by getVehicles()", e);
 			String message = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);
@@ -80,13 +85,17 @@ public class VehicleBLL {
 
 	public String updateVehicle(String incomingData) {
 		String outputData;
-		
+		ProtocolMessage protocolMsg;
 		try {
 			VehicleModel vehicle = (VehicleModel) interpreter.decodeFromJsonToObj(ProtocolMessage.VEHICLE_MODEL, incomingData);
-			vehicleDAL.updateVehicle(vehicle);
-			//TODO
-			String message = ProtocolMessage.getMessage(ProtocolMessage.VEHICLE_UPDATED_SUCCESSFULLY,vehicle.getPlateNumber());
-			outputData = interpreter.encodeObjToJson(ProtocolMessage.VEHICLE_UPDATED_SUCCESSFULLY,message);			
+			boolean isUpdated = vehicleDAL.updateVehicle(vehicle);
+			
+			if (isUpdated)
+				protocolMsg = ProtocolMessage.VEHICLE_UPDATED_SUCCESSFULLY;
+			else
+				protocolMsg = ProtocolMessage.VEHICLE_UPDATE_FAILED;
+			
+			outputData = interpreter.encodeObjToJson(protocolMsg,ProtocolMessage.getMessage(protocolMsg,vehicle.getPlateNumber()));			
 		} catch (SQLException e) {
 			new ExcaptionHandler("Exception Updating user.Thrown by updateVehicle()", e);
 			String message = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);
@@ -97,19 +106,18 @@ public class VehicleBLL {
 
 	public String creatNewVehicle(String incomingData) {
 	String outputData;
-		
+	ProtocolMessage protocolMsg;
+	
 		try {
 			VehicleModel newVehicle = (VehicleModel) interpreter.decodeFromJsonToObj(ProtocolMessage.VEHICLE_MODEL, incomingData);
 			boolean isSucceeded = vehicleDAL.insertNewVehicle(newVehicle);
 			
-			if (isSucceeded) {
-				String message = ProtocolMessage.getMessage(ProtocolMessage.VEHICLE_CREATED_SUCCESSFULLY,newVehicle.getPlateNumber());
-				outputData = interpreter.encodeObjToJson(ProtocolMessage.VEHICLE_CREATED_SUCCESSFULLY,message);
-			}
-			else {
-				String message = ProtocolMessage.getMessage(ProtocolMessage.VEHICLE_ALREADY_EXIST,newVehicle.getPlateNumber());
-				outputData = interpreter.encodeObjToJson(ProtocolMessage.VEHICLE_ALREADY_EXIST,message);
-			}			
+			if (isSucceeded)
+				protocolMsg = ProtocolMessage.VEHICLE_CREATED_SUCCESSFULLY;
+			else 
+				protocolMsg = ProtocolMessage.VEHICLE_ALREADY_EXIST;
+
+			outputData = interpreter.encodeObjToJson(protocolMsg,ProtocolMessage.getMessage(protocolMsg,newVehicle.getPlateNumber()));
 		} catch (SQLException e) {
 			new ExcaptionHandler("Exception Creating a new user.Thrown by creatNewUser()", e);
 			String message = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);

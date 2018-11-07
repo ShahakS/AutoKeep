@@ -74,4 +74,23 @@ public class ReservationBLL {
 		}		
 		return outgoingData;
 	}
+
+	public String getReservations() {
+		String outputData;
+		
+		try {
+			Queue<ReservationModel> reservationsList = reservationDAL.getLast30DaysReservations();
+			
+			if (reservationsList.isEmpty())
+				outputData = interpreter.encodeObjToJson(ProtocolMessage.NO_RESERVATIONS, ProtocolMessage.getMessage(ProtocolMessage.NO_RESERVATIONS));
+			else			
+				outputData = interpreter.encodeObjToJson(ProtocolMessage.RESERVATION_MODEL_LIST, reservationsList);
+			
+		} catch (SQLException e) {
+			new ExcaptionHandler("Exception getting users list.Thrown by getReservations()", e);
+			String message = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);
+			outputData = interpreter.encodeObjToJson(ProtocolMessage.ERROR,message);	
+		}
+		return outputData;
+	}
 }

@@ -141,19 +141,18 @@ public class UserBLL {
 	
 	public String creatNewUser(String incomingData) {
 		String outputData;
+		ProtocolMessage protocolMsg;
 		
 		try {
 			UserModel newUser = (UserModel) interpreter.decodeFromJsonToObj(ProtocolMessage.USER_MODEL, incomingData);
-			boolean isSucceeded = userDAL.insertNewUser(newUser);
+			boolean isCreated = userDAL.insertNewUser(newUser);
 			
-			if (isSucceeded) {
-				String message = ProtocolMessage.getMessage(ProtocolMessage.USER_CREATED_SUCCESSFULLY,newUser.getEmailAddress());
-				outputData = interpreter.encodeObjToJson(ProtocolMessage.USER_CREATED_SUCCESSFULLY,message);
-			}
-			else {
-				String message = ProtocolMessage.getMessage(ProtocolMessage.EMAIL_ADDRESS_ALREADY_REGISTERED,newUser.getEmailAddress());
-				outputData = interpreter.encodeObjToJson(ProtocolMessage.EMAIL_ADDRESS_ALREADY_REGISTERED,message);
-			}			
+			if (isCreated)
+				protocolMsg = ProtocolMessage.USER_CREATED_SUCCESSFULLY;
+			else
+				protocolMsg = ProtocolMessage.EMAIL_ADDRESS_ALREADY_REGISTERED;
+		
+			outputData = interpreter.encodeObjToJson(protocolMsg,ProtocolMessage.getMessage(protocolMsg,newUser.getEmailAddress()));
 		} catch (SQLException e) {
 			new ExcaptionHandler("Exception Creating a new user.Thrown by creatNewUser()", e);
 			String message = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);
@@ -169,13 +168,17 @@ public class UserBLL {
 	 */
 	public String deleteUser(String incomingData) {
 		String outputData;
-		
+		ProtocolMessage protocolMsg;
 		try {
 			UserModel user = (UserModel) interpreter.decodeFromJsonToObj(ProtocolMessage.USER_MODEL, incomingData);
-			userDAL.deleteUserByEmail(user.getEmailAddress());
+			boolean isDeleted = userDAL.deleteUserByEmail(user.getEmailAddress());
 			
-			String message = ProtocolMessage.getMessage(ProtocolMessage.USER_DELETED_SUCCESSFULLY,user.getEmailAddress());
-			outputData = interpreter.encodeObjToJson(ProtocolMessage.USER_DELETED_SUCCESSFULLY,message);			
+			if (isDeleted)
+				protocolMsg = ProtocolMessage.USER_DELETED_SUCCESSFULLY;
+			else 
+				protocolMsg = ProtocolMessage.USER_DELETION_FAILED;
+			
+			outputData = interpreter.encodeObjToJson(ProtocolMessage.USER_DELETION_FAILED,ProtocolMessage.getMessage(protocolMsg,user.getEmailAddress()));
 		} catch (SQLException e) {
 			new ExcaptionHandler("Exception deleting user.Thrown by deleteUser()", e);
 			String message = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);
@@ -186,13 +189,17 @@ public class UserBLL {
 	
 	public String updateUser(String incomingData) {
 		String outputData;
+		ProtocolMessage protocolMsg;
 		
 		try {
 			UserModel user = (UserModel) interpreter.decodeFromJsonToObj(ProtocolMessage.USER_MODEL, incomingData);
-			userDAL.updateUser(user);
-			//TODO
-			String message = ProtocolMessage.getMessage(ProtocolMessage.USER_UPDATED_SUCCESSFULLY,user.getEmailAddress());
-			outputData = interpreter.encodeObjToJson(ProtocolMessage.USER_UPDATED_SUCCESSFULLY,message);			
+			boolean isUpdated = userDAL.updateUser(user);
+			
+			if (isUpdated)
+				protocolMsg = ProtocolMessage.USER_UPDATED_SUCCESSFULLY;
+			else
+				protocolMsg = ProtocolMessage.USER_UPDATE_FAILED;
+			outputData = interpreter.encodeObjToJson(protocolMsg,ProtocolMessage.getMessage(protocolMsg,user.getEmailAddress()));			
 		} catch (SQLException e) {
 			new ExcaptionHandler("Exception Updating user.Thrown by updateUser()", e);
 			String message = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);

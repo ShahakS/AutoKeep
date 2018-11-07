@@ -92,8 +92,8 @@ public class VehicleDAL {
 		DBconnector.executeSqlStatement(query, parameters);	
 	}
 
-	public void updateVehicle(VehicleModel vehicle) throws SQLException {
-		String query = "{call sp_UpdateActiveVehicle(?,?,?,?,?,?,?,?,?,?)}";
+	public boolean updateVehicle(VehicleModel vehicle) throws SQLException {
+		String query = "{? = call sp_UpdateActiveVehicle(?,?,?,?,?,?,?,?,?,?)}";
 		Queue<Object> parameters = new LinkedList<>();
 
 		parameters.add(vehicle.getPlateNumber());
@@ -107,8 +107,7 @@ public class VehicleDAL {
 		parameters.add(vehicle.getVehicleImage());
 		parameters.add(vehicle.getVehicleType());
 		
-		DBconnector.executeSqlStatement(query, parameters);	
-		
+		return DBconnector.callRoutineReturnedBooleanScalarValue(query, parameters);			
 	}
 
 	public boolean insertNewVehicle(VehicleModel newVehicle) throws SQLException {
@@ -128,5 +127,30 @@ public class VehicleDAL {
 		boolean isAddedSuccessfully = DBconnector.callRoutineReturnedBooleanScalarValue(query, parameters);
 		
 		return isAddedSuccessfully;
+	}
+
+	public VehicleModel getVehicleByVehicleID(int vehicleID) throws SQLException {
+		String query = "SELECT * FROM fn_GetVehicleByVehicleID(?)";
+		Queue<Object> parameters = new LinkedList<>();
+		VehicleModel vehicle = null;
+		
+		parameters.add(vehicleID);			
+		ResultSet resultSet = DBconnector.executeSqlStatementResultSet(query, parameters);
+		
+		while (resultSet.next()){
+			String plateNumber = resultSet.getString("PlateNumber");
+			String manufactureName = resultSet.getString("ManufactureName");
+			String model = resultSet.getString("Model");
+			String vehicleType = resultSet.getString("VehicleType");
+			int manufactureYear = resultSet.getInt("ManufactureYear");
+			int seatsNumber = resultSet.getInt("SeatsNumber");
+			int engineCapacity = resultSet.getInt("EngineCapacity");
+			boolean isUsable = resultSet.getBoolean("IsUsable");
+			int kilometers = resultSet.getInt("Kilometers");
+			String vehicleImage = resultSet.getString("VehicleImage");
+			vehicle = new VehicleModel(plateNumber, manufactureName, model, vehicleType, manufactureYear,
+													seatsNumber, engineCapacity, isUsable, kilometers, vehicleImage);
+		}
+		return vehicle;
 	}
 }

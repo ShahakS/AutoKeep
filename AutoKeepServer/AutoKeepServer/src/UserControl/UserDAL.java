@@ -66,11 +66,31 @@ public class UserDAL {
 				String phoneNumber = resultSet.getString("phoneNumber");
 				boolean IsAdministrator = resultSet.getBoolean("IsAdministrator");
 				user = new UserModel(userID,emailAddress, password, dateOfBirth, firstName, lastName, phoneNumber, IsAdministrator);
-			}
-					
+			}					
 			return user;
 		}
-
+		
+		public UserModel getUser(int userID) throws SQLException{
+			String query = "SELECT * FROM fn_GetUserByUserID(?)";
+			Queue<Object> parameters = new LinkedList<>();
+			UserModel user = null;
+			
+			parameters.add(userID);			
+			ResultSet resultSet = DBconnector.executeSqlStatementResultSet(query, parameters);
+			
+			while (resultSet.next()){
+				String emailAddress = resultSet.getString("emailAddress");
+				String password = resultSet.getString("password");
+				String dateOfBirth = resultSet.getString("dateOfBirth");
+				String firstName = resultSet.getString("firstName");
+				String lastName = resultSet.getString("lastName");
+				String phoneNumber = resultSet.getString("phoneNumber");
+				boolean IsAdministrator = resultSet.getBoolean("IsAdministrator");
+				user = new UserModel(userID,emailAddress, password, dateOfBirth, firstName, lastName, phoneNumber, IsAdministrator);
+			}					
+			return user;
+		}
+		
 		public void changePassword(String emailAddress, String password) throws SQLException {
 			String query = "{call sp_UpdateUserPassword(?,?)}";
 			Queue<Object> parameters = new LinkedList<>();
@@ -118,16 +138,16 @@ public class UserDAL {
 			return isAddedSuccessfully;
 		}
 
-		public void deleteUserByEmail(String emailAddress) throws SQLException {
-			String query = "{call sp_DeleteUserByEmailAddress(?)}";
+		public boolean deleteUserByEmail(String emailAddress) throws SQLException {
+			String query = "{? = call sp_DeleteUserByEmailAddress(?)}";
 			Queue<Object> parameters = new LinkedList<>();
 
 			parameters.add(emailAddress);
-			DBconnector.executeSqlStatement(query, parameters);		
+			return DBconnector.callRoutineReturnedBooleanScalarValue(query, parameters);		
 		}
 
-		public void updateUser(UserModel user) throws SQLException {
-			String query = "{call sp_UpdateUser(?,?,?,?,?,?,?)}";
+		public boolean updateUser(UserModel user) throws SQLException {
+			String query = "{? = call sp_UpdateUser(?,?,?,?,?,?,?)}";
 			Queue<Object> parameters = new LinkedList<>();
 
 			parameters.add(user.getEmailAddress());
@@ -137,6 +157,6 @@ public class UserDAL {
 			parameters.add(user.getPhoneNumber());
 			parameters.add(user.getDateOfBirth());
 			parameters.add(user.IsAdministrator());				
-			DBconnector.executeSqlStatement(query, parameters);				
+			return DBconnector.callRoutineReturnedBooleanScalarValue(query, parameters);				
 		}
 }

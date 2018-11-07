@@ -19,6 +19,8 @@ public enum ProtocolMessage {
 	CREATE_NEW_VEHICLE,
 	VEHICLE_CREATED_SUCCESSFULLY,
 	VEHICLE_ALREADY_EXIST,
+	NO_VEHICLES,
+	VEHICLE_UPDATE_FAILED,
 	
 	ORDER,
 	ORDER_FAILED,
@@ -30,6 +32,8 @@ public enum ProtocolMessage {
 	RESERVATION_HISTORY,
 	NO_HISTORY,
 	HISTORY_RESULT,
+	RESERVATIONS_LIST,
+	NO_RESERVATIONS,
 	
 	USER_CHANGE_PASSWORD,
 	PASSWORD_CHANGED_SUCCESSFULLY,
@@ -40,8 +44,10 @@ public enum ProtocolMessage {
 	USERS_LIST,
 	DELETE_USER,
 	USER_DELETED_SUCCESSFULLY,
+	USER_DELETION_FAILED,
 	USER_UPDATED_SUCCESSFULLY,
 	UPDATE_USER,
+	USER_UPDATE_FAILED,
 	
 	USER_MODEL,
 	RESERVATION_MODEL,
@@ -133,6 +139,14 @@ public enum ProtocolMessage {
 				messageString = "The user "+ args[0] +" has been updated successfully";
 				break;
 				
+			case USER_DELETION_FAILED:
+				messageString = "Failed to delete the user: "+args[0] +".\nCan't delete default account";
+				break;
+				
+			case USER_UPDATE_FAILED:
+				messageString = "Failed to update the user: "+args[0] +".\nThe user has been deleted";
+				break;
+				
 			case VEHICLE_DELETED_SUCCESSFULLY:
 				messageString = "The vehicle "+ args[0] +" has been deleted successfully";
 				break;
@@ -147,6 +161,18 @@ public enum ProtocolMessage {
 				
 			case VEHICLE_ALREADY_EXIST:
 				messageString = "Plate number "+args[0] +" is already exists in the database";
+				break;
+				
+			case NO_VEHICLES:
+				messageString = "There are no vehicles to display";
+				break;
+				
+			case VEHICLE_UPDATE_FAILED:
+				messageString = "Failed to update the vehicle: "+args[0] +".\nThe vehicle has been deleted";
+				break;
+				
+			case NO_RESERVATIONS:
+				messageString = "There are no reservations from last 30 days to display";
 				break;
 				
 			default:

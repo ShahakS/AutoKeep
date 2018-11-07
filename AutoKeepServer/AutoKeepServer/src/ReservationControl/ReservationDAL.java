@@ -6,6 +6,9 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import Database.DatabaseConnector;
+import UserControl.UserDAL;
+import UserControl.UserModel;
+import VehicleControl.VehicleDAL;
 import VehicleControl.VehicleModel;
 
 public class ReservationDAL {
@@ -69,6 +72,25 @@ public class ReservationDAL {
 			reservation.setVehicle(vehicle);
 			reservations.add(reservation);			
 		}				
+		return reservations;
+	}
+
+	public Queue<ReservationModel> getLast30DaysReservations() throws SQLException {
+		String query = "SELECT * FROM fn_GetLastMonthOrders()";
+		Queue<Object> parameters = new LinkedList<>();
+		Queue<ReservationModel> reservations = new LinkedList<>();
+					
+		ResultSet resultSet = DBconnector.executeSqlStatementResultSet(query, parameters);		
+		while (resultSet.next()){
+			int reservationID = resultSet.getInt("ReservationID");
+			String reservationDate = resultSet.getString("OrderTime");
+			String reservationStartDate = resultSet.getString("StartingDate");
+			String reservationEndDate = resultSet.getString("EndingDate");
+			UserModel user = new UserDAL().getUser(resultSet.getInt("UserID"));
+			VehicleModel vehicle = new VehicleDAL().getVehicleByVehicleID(resultSet.getInt("VehicleID"));			
+			ReservationModel reservation = new ReservationModel(reservationID, user, vehicle, reservationDate,reservationStartDate, reservationEndDate);
+			reservations.add(reservation);
+		}
 		return reservations;
 	}
 }

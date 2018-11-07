@@ -72,35 +72,39 @@ public class ClientHandler implements Runnable{
 			
 		switch(interpreter.getProtocolMsg(incomingData)) {
 			case USERS_LIST:
-				outgoingData = userBLL.getUsers();
+				outgoingData = userBLL.getUsers();//DONE
 				break;
 				
 			case CREATE_NEW_USER:
-				outgoingData = userBLL.creatNewUser(incomingData);
+				outgoingData = userBLL.creatNewUser(incomingData);//DONE
 				break;
 				
 			case DELETE_USER:
-				outgoingData = userBLL.deleteUser(incomingData);
+				outgoingData = userBLL.deleteUser(incomingData);//TODO implements protection for deletion when user is online
 				break;
 				
 			case UPDATE_USER:
-				outgoingData = userBLL.updateUser(incomingData);
+				outgoingData = userBLL.updateUser(incomingData);//DONE
 				break;
 				
 			case VEHICLES_LIST:
-				outgoingData = vehicleBLL.getVehicles();
+				outgoingData = vehicleBLL.getVehicles();//DONE
 				break;
 				
 			case CREATE_NEW_VEHICLE:
-				outgoingData = vehicleBLL.creatNewVehicle(incomingData);
+				outgoingData = vehicleBLL.creatNewVehicle(incomingData);//DONE
 				break;
 				
 			case DELETE_VEHICLE:
-				outgoingData = vehicleBLL.deleteVehicle(incomingData);
+				outgoingData = vehicleBLL.deleteVehicle(incomingData);//TODO implements protection for deletion when vehicle is used
 				break;
 				
 			case UPDATE_VEHICLE:
-				outgoingData = vehicleBLL.updateVehicle(incomingData);
+				outgoingData = vehicleBLL.updateVehicle(incomingData);//DONE
+				break;
+				
+			case RESERVATIONS_LIST:
+				outgoingData = reservationBLL.getReservations();//DONE
 				break;
 				
 			default:
