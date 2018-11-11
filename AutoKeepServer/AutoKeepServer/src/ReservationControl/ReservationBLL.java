@@ -17,7 +17,7 @@ public class ReservationBLL {
 	}
 	
 	public String order(String incomingData,String emailAddress) {
-		String outgoingData = null;
+		String outgoingData;
 		
 		try {
 			boolean isThereAnActiveReservation= reservationDAL.isThereAnActiveReservation(emailAddress);
@@ -87,10 +87,21 @@ public class ReservationBLL {
 				outputData = interpreter.encodeObjToJson(ProtocolMessage.RESERVATION_MODEL_LIST, reservationsList);
 			
 		} catch (SQLException e) {
-			new ExcaptionHandler("Exception getting users list.Thrown by getReservations()", e);
+			new ExcaptionHandler("Exception getting reservation list.Thrown by getReservations()", e);
 			String message = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);
 			outputData = interpreter.encodeObjToJson(ProtocolMessage.ERROR,message);	
 		}
 		return outputData;
+	}
+
+	public String createNewReservation(String incomingData) {
+		ReservationModel reservation = (ReservationModel) interpreter.decodeFromJsonToObj(ProtocolMessage.RESERVATION_MODEL, incomingData);
+		String outputData = order(incomingData, reservation.getUser().getEmailAddress());
+		return outputData;
+	}
+
+	public String updateReservation(String incomingData) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

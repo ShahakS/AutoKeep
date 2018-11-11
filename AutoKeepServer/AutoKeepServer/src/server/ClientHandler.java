@@ -107,6 +107,14 @@ public class ClientHandler implements Runnable{
 				outgoingData = reservationBLL.getReservations();//DONE
 				break;
 				
+			case CREATE_NEW_RESERVATION:
+				outgoingData = reservationBLL.createNewReservation(incomingData);//TODO check if is ATOMIC
+				break;
+				
+			case UPDATE_RESERVATIONS:
+				outgoingData = reservationBLL.updateReservation(incomingData);//TODO
+				break;
+				
 			default:
 				outgoingData = userBusinessLogicFlow(incomingData);
 				break;
