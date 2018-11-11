@@ -69,6 +69,9 @@ public class ReservationDAL {
 			reservation.setReservationDate(resultSet.getString("OrderTime"));
 			reservation.setReservationStartDate(resultSet.getString("StartingDate"));
 			reservation.setReservationEndDate(resultSet.getString("EndingDate"));
+			reservation.setCanceled(resultSet.getBoolean("IsCanceled"));
+			reservation.setCancelationDate(resultSet.getString("CancelationDate"));
+			reservation.setCancelationReason(resultSet.getString("CancelationReason"));
 			reservation.setVehicle(vehicle);
 			reservations.add(reservation);			
 		}				
@@ -87,8 +90,12 @@ public class ReservationDAL {
 			String reservationStartDate = resultSet.getString("StartingDate");
 			String reservationEndDate = resultSet.getString("EndingDate");
 			UserModel user = new UserDAL().getUser(resultSet.getInt("UserID"));
-			VehicleModel vehicle = new VehicleDAL().getVehicleByVehicleID(resultSet.getInt("VehicleID"));			
-			ReservationModel reservation = new ReservationModel(reservationID, user, vehicle, reservationDate,reservationStartDate, reservationEndDate);
+			VehicleModel vehicle = new VehicleDAL().getVehicleByVehicleID(resultSet.getInt("VehicleID"));
+			boolean isCanceled = resultSet.getBoolean("IsCanceled");
+			String cancelationDate = resultSet.getString("CancelationDate");
+			String cancelationReason = resultSet.getString("CancelationReason");
+			ReservationModel reservation = new ReservationModel(reservationID, user, vehicle, reservationDate,
+					reservationStartDate, reservationEndDate, isCanceled, cancelationDate, cancelationReason);
 			reservations.add(reservation);
 		}
 		return reservations;

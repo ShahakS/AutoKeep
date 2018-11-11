@@ -87,7 +87,7 @@ public class TestClient {
 				//get available vehicles
 				UserModel user = new UserModel(10011,"sad", "", "", "", "", "", true);
 				VehicleModel vehicle = new VehicleModel("1", "", "", "FAMILY", 6, 5, 1600, true, 213033, "");
-				ReservationModel r = new ReservationModel(1, user, vehicle, "2018-09-09", "2018-11-09", "2018-11-09");
+				ReservationModel r = new ReservationModel(1, user, vehicle, "2018-09-09", "2018-11-09", "2018-11-09",false,null,null);
 				Queue<String> keys = new LinkedList<>();
 				Queue<String> values = new LinkedList<>();
 				keys.add("reservation");
@@ -109,7 +109,7 @@ public class TestClient {
 					Queue<String> values = new LinkedList<>();
 					UserModel user = new UserModel(234567,"sad", "", "", "", "", "", true);
 					VehicleModel vehicle = new VehicleModel("68-345-79", "", "", "FAMILY", 6, 5, 1600, true, 213033, "");
-					ReservationModel r = new ReservationModel(1, user, vehicle, "2018-09-09", "2018-11-09", "2018-11-09");
+					ReservationModel r = new ReservationModel(1, user, vehicle, "2018-09-09", "2018-11-09", "2018-11-09",false,null,null);
 					keys.add("reservation");
 					values.add("{reservationStartDate:"+r.getReservationStartDate()
 							+",reservationEndDate:"+r.getReservationStartDate()

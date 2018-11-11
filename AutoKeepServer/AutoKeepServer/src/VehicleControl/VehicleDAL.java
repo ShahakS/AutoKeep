@@ -14,6 +14,15 @@ public class VehicleDAL {
 		DBconnector = DatabaseConnector.getDbConnectorInstance();
 	}
 	
+	/**
+	 * Search available vehicles between the time frame and parameters that supplied  
+	 * @param startDate
+	 * @param endDate
+	 * @param vehicleType
+	 * @param seatsNumber
+	 * @return Queue<VehicleModel> a queue of vehicles
+	 * @throws SQLException
+	 */
 	public Queue<VehicleModel> searchAvailableVehicles(String startDate,String endDate,String vehicleType,int seatsNumber) throws SQLException{
 		Queue<Object> parameters = new LinkedList<>();
 		VehicleModel vehicle = null;
@@ -58,9 +67,14 @@ public class VehicleDAL {
 		}				
 		return vehicles;
 	}
-
+	
+	/**
+	 * Get a queue of all Active vehicles which didn't deleted
+	 * @return Queue<VehicleModel> 
+	 * @throws SQLException
+	 */
 	public Queue<VehicleModel> getAllVehicles() throws SQLException {
-		String query = "SELECT * FROM fn_GetAllVehicles()";
+		String query = "SELECT * FROM fn_GetAllActiveVehicles()";
 		Queue<Object> parameters = new LinkedList<>();
 		Queue<VehicleModel> vehicles = new LinkedList<>();
 					
@@ -83,7 +97,12 @@ public class VehicleDAL {
 		}
 		return vehicles;
 	}
-
+	
+	/**
+	 * Mark a vehicle for deletion and all the reservations depended on it
+	 * @param plateNumber of the vehicle
+	 * @throws SQLException
+	 */
 	public void deleteVehicleByPlateNumber(String plateNumber) throws SQLException {
 		String query = "{call sp_DeleteVehicleByPlateNumber(?)}";
 		Queue<Object> parameters = new LinkedList<>();
@@ -91,7 +110,13 @@ public class VehicleDAL {
 		parameters.add(plateNumber);
 		DBconnector.executeSqlStatement(query, parameters);	
 	}
-
+	
+	/**
+	 * Update a specific vehicle
+	 * @param vehicle
+	 * @return true if succeeded otherwise returns false
+	 * @throws SQLException
+	 */
 	public boolean updateVehicle(VehicleModel vehicle) throws SQLException {
 		String query = "{? = call sp_UpdateActiveVehicle(?,?,?,?,?,?,?,?,?,?)}";
 		Queue<Object> parameters = new LinkedList<>();
@@ -110,8 +135,14 @@ public class VehicleDAL {
 		return DBconnector.callRoutineReturnedBooleanScalarValue(query, parameters);			
 	}
 
+	/**
+	 * Insert a new vehicle
+	 * @param newVehicle VehicleModel to insert
+	 * @return true if succeeded, if plate number already exist return false
+	 * @throws SQLException
+	 */
 	public boolean insertNewVehicle(VehicleModel newVehicle) throws SQLException {
-		String query = "{?= call sp_InsertNewVehicle(?, ?, ?, ?, ?, ?, ?,?,?,?)}";
+		String query = "{?= call sp_InsertNewVehicle(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
 		Queue<Object> parameters = new LinkedList<>();
 
 		parameters.add(newVehicle.getPlateNumber());
@@ -129,6 +160,12 @@ public class VehicleDAL {
 		return isAddedSuccessfully;
 	}
 
+	/**
+	 * Get VehicleModel by vehicleID
+	 * @param vehicleID the ID of the vehicle
+	 * @return VehicleModel
+	 * @throws SQLException
+	 */
 	public VehicleModel getVehicleByVehicleID(int vehicleID) throws SQLException {
 		String query = "SELECT * FROM fn_GetVehicleByVehicleID(?)";
 		Queue<Object> parameters = new LinkedList<>();

@@ -10,12 +10,16 @@ public class ReservationModel {
 	private String reservationDate;
 	private String reservationStartDate;
 	private String reservationEndDate;
+	private boolean isCanceled;
+	private String cancelationDate;
+	private String cancelationReason;
 	
 	public ReservationModel() {
 	}
-	
+
 	public ReservationModel(int reservationID, UserModel user, VehicleModel vehicle, String reservationDate,
-			String reservationStartDate, String reservationEndDate) {
+			String reservationStartDate, String reservationEndDate, boolean isCanceled, String cancelationDate,
+			String cancelationReason) {
 		super();
 		this.reservationID = reservationID;
 		this.user = user;
@@ -23,6 +27,9 @@ public class ReservationModel {
 		this.reservationDate = reservationDate;
 		this.reservationStartDate = reservationStartDate;
 		this.reservationEndDate = reservationEndDate;
+		this.isCanceled = isCanceled;
+		this.cancelationDate = cancelationDate;
+		this.cancelationReason = cancelationReason;
 	}
 
 	public int getReservationID() {
@@ -71,5 +78,29 @@ public class ReservationModel {
 
 	public void setReservationEndDate(String reservationEndDate) {
 		this.reservationEndDate = reservationEndDate;
+	}
+
+	public boolean isCanceled() {
+		return isCanceled;
+	}
+
+	public String getCancelationDate() {
+		return cancelationDate;
+	}
+
+	public String getCancelationReason() {
+		return cancelationReason;
+	}
+
+	public void setCanceled(boolean isCanceled) {
+		this.isCanceled = isCanceled;
+	}
+
+	public void setCancelationDate(String cancelationDate) {
+		this.cancelationDate = cancelationDate;
+	}
+
+	public void setCancelationReason(String cancelationReason) {
+		this.cancelationReason = cancelationReason;
 	}
 }
