@@ -100,4 +100,19 @@ public class ReservationDAL {
 		}
 		return reservations;
 	}
+
+	public boolean updateReservation(int reservationID, int userID, String plateNumber, String startDate,String endDate) throws SQLException {
+		String query = "{?= call sp_UpdateReservation(?, ?, ?, ? , ?)}";
+		Queue<Object> parameters = new LinkedList<>();
+		boolean isUpdated;
+
+		parameters.add(reservationID);
+		parameters.add(userID);
+		parameters.add(plateNumber);
+		parameters.add(startDate);
+		parameters.add(endDate);
+		isUpdated = DBconnector.callRoutineReturnedBooleanScalarValue(query, parameters);
+		
+		return isUpdated;
+	}
 }

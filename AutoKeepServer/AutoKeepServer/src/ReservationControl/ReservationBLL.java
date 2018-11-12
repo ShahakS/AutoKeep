@@ -100,8 +100,31 @@ public class ReservationBLL {
 		return outputData;
 	}
 
-	public String updateReservation(String incomingData) {
-		// TODO Auto-generated method stub
-		return null;
+	public String updateExistingReservation(String incomingData) {
+		String outputData;
+		ProtocolMessage protocolMsg;
+		
+		try {
+			ReservationModel reservation = (ReservationModel)interpreter.decodeFromJsonToObj(ProtocolMessage.RESERVATION_MODEL, incomingData);
+			int reservationID = reservation.getReservationID();
+			int userID = reservation.getUser().getUserID();
+			String plateNumber = reservation.getVehicle().getPlateNumber();
+			String startDate = reservation.getReservationStartDate();
+			String endDate = reservation.getReservationEndDate();			
+			
+			boolean isUpdated = reservationDAL.updateReservation(reservationID,userID,plateNumber,startDate,endDate);
+			
+			if (isUpdated)
+				protocolMsg = ProtocolMessage.RESERVATION_UPDATED_SUCCESSFULLY;
+			else			
+				protocolMsg = ProtocolMessage.RESERVATION_UPDATE_FAILED;
+			
+			outputData = interpreter.encodeObjToJson(protocolMsg, ProtocolMessage.getMessage(protocolMsg,String.valueOf(reservationID)));			
+		} catch (SQLException e) {
+			new ExcaptionHandler("Exception updating reservation.Thrown by updateExistingReservation()", e);
+			String message = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);
+			outputData = interpreter.encodeObjToJson(ProtocolMessage.ERROR,message);	
+		}
+		return outputData;
 	}
 }

@@ -111,8 +111,8 @@ public class ClientHandler implements Runnable{
 				outgoingData = reservationBLL.createNewReservation(incomingData);//TODO check if is ATOMIC
 				break;
 				
-			case UPDATE_RESERVATIONS:
-				outgoingData = reservationBLL.updateReservation(incomingData);//TODO
+			case UPDATE_RESERVATION:
+				outgoingData = reservationBLL.updateExistingReservation(incomingData);//TODO
 				break;
 				
 			default:

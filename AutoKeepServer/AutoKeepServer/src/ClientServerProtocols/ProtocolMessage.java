@@ -35,7 +35,9 @@ public enum ProtocolMessage {
 	RESERVATIONS_LIST,
 	NO_RESERVATIONS,
 	CREATE_NEW_RESERVATION,
-	UPDATE_RESERVATIONS,
+	UPDATE_RESERVATION,
+	RESERVATION_UPDATED_SUCCESSFULLY,
+	RESERVATION_UPDATE_FAILED,
 	
 	USER_CHANGE_PASSWORD,
 	PASSWORD_CHANGED_SUCCESSFULLY,
@@ -175,6 +177,14 @@ public enum ProtocolMessage {
 				
 			case NO_RESERVATIONS:
 				messageString = "There are no reservations from last 30 days to display";
+				break;
+				
+			case RESERVATION_UPDATED_SUCCESSFULLY:
+				messageString = "Reservation ID: "+ args[0] +" has been updated successfully";
+				break;
+				
+			case RESERVATION_UPDATE_FAILED:
+				messageString = "Reservation ID: "+ args[0] +" update failed";
 				break;
 				
 			default:
