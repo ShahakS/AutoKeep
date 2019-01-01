@@ -2,6 +2,7 @@ package UserControl;
 
 import java.net.Socket;
 import java.sql.SQLException;
+import java.util.LinkedList;
 import java.util.Queue;
 
 import ClientServerProtocols.ProtocolMessage;
@@ -69,7 +70,10 @@ public class UserBLL {
 				}else if (connectionRetries == 1) {
 					ban(clientSocket);
 					protocolMessage = ProtocolMessage.TOO_MANY_AUTHENTICATION_RETRIES;
-					outputData = interpreter.encodeObjToJson(protocolMessage,ProtocolMessage.getMessage(protocolMessage));
+					Queue<Object> msg = new LinkedList<>();
+					msg.add(ProtocolMessage.getMessage(protocolMessage,String.valueOf(SessionManager.BAN_DURATION)));
+					msg.add(SessionManager.BAN_DURATION);
+					outputData = interpreter.encodeObjToJson(protocolMessage,msg);
 				}else{
 					 protocolMessage = ProtocolMessage.WRONG_CREDENTIAL;
 					 outputData = interpreter.encodeObjToJson(protocolMessage,ProtocolMessage.getMessage(protocolMessage));		
@@ -112,7 +116,10 @@ public class UserBLL {
 		if (sessionManager.isBanned(socket)) {
 			ProtocolMessage protocolMsg = ProtocolMessage.USER_IS_BANNED;
 			String customMsg = ProtocolMessage.getMessage(protocolMsg,sessionManager.getRemainingBanTime(socket));
-			outputData = interpreter.encodeObjToJson(protocolMsg,customMsg);
+			Queue<Object> msg = new LinkedList<>();
+			msg.add(customMsg);
+			msg.add(Integer.parseInt(sessionManager.getRemainingBanTime(socket)));
+			outputData = interpreter.encodeObjToJson(protocolMsg,msg);
 		}
 		return outputData;
 	}

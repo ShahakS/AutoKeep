@@ -1,7 +1,5 @@
 package ClientServerProtocols;
 
-import SessionControl.SessionManager;
-
 public enum ProtocolMessage {
 	OK,
 	WRONG_CREDENTIAL,
@@ -38,6 +36,9 @@ public enum ProtocolMessage {
 	UPDATE_RESERVATION,
 	RESERVATION_UPDATED_SUCCESSFULLY,
 	RESERVATION_UPDATE_FAILED,
+	CANCEL_RESERVATION,
+	RESERVATION_CANCELED_SUCCESSFULLY,
+	RESERVATION_CANCELED_FAILED,
 	
 	USER_CHANGE_PASSWORD,
 	PASSWORD_CHANGED_SUCCESSFULLY,
@@ -78,8 +79,7 @@ public enum ProtocolMessage {
 				break;
 				
 			case TOO_MANY_AUTHENTICATION_RETRIES:
-				messageString = "You have been tried to connect 5 times\nPlease Try again in "
-														+SessionManager.BAN_DURATION + " seconds";
+				messageString = "You have been tried to connect 5 times\nPlease Try again in "+args[0] + " seconds";
 				break;
 				
 			case USER_ALREADY_CONNECTED:
@@ -185,6 +185,14 @@ public enum ProtocolMessage {
 				
 			case RESERVATION_UPDATE_FAILED:
 				messageString = "Reservation ID: "+ args[0] +" update failed";
+				break;
+				
+			case RESERVATION_CANCELED_SUCCESSFULLY:
+				messageString = "Reservation ID: "+ args[0] +" has been canceled successfully";
+				break;
+				
+			case RESERVATION_CANCELED_FAILED:
+				messageString = "Reservation ID: "+ args[0] +" canceled failed";
 				break;
 				
 			default:

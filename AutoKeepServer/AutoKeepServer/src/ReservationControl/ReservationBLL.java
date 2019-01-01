@@ -79,7 +79,7 @@ public class ReservationBLL {
 		String outputData;
 		
 		try {
-			Queue<ReservationModel> reservationsList = reservationDAL.getLast30DaysReservations();
+			Queue<ReservationModel> reservationsList = reservationDAL.getLastMonthReservations();
 			
 			if (reservationsList.isEmpty())
 				outputData = interpreter.encodeObjToJson(ProtocolMessage.NO_RESERVATIONS, ProtocolMessage.getMessage(ProtocolMessage.NO_RESERVATIONS));
@@ -122,6 +122,30 @@ public class ReservationBLL {
 			outputData = interpreter.encodeObjToJson(protocolMsg, ProtocolMessage.getMessage(protocolMsg,String.valueOf(reservationID)));			
 		} catch (SQLException e) {
 			new ExcaptionHandler("Exception updating reservation.Thrown by updateExistingReservation()", e);
+			String message = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);
+			outputData = interpreter.encodeObjToJson(ProtocolMessage.ERROR,message);	
+		}
+		return outputData;
+	}
+
+	public String cancelReservation(String incomingData) {
+		String outputData;
+		ProtocolMessage protocolMsg;
+		
+		try {
+			ReservationModel reservation = (ReservationModel)interpreter.decodeFromJsonToObj(ProtocolMessage.RESERVATION_MODEL, incomingData);
+			int reservationID = reservation.getReservationID();		
+			
+			boolean isCanceled = reservationDAL.cancelReservation(reservationID,2);
+			
+			if (isCanceled)
+				protocolMsg = ProtocolMessage.RESERVATION_CANCELED_SUCCESSFULLY;
+			else			
+				protocolMsg = ProtocolMessage.RESERVATION_CANCELED_FAILED;
+			
+			outputData = interpreter.encodeObjToJson(protocolMsg, ProtocolMessage.getMessage(protocolMsg,String.valueOf(reservationID)));			
+		} catch (SQLException e) {
+			new ExcaptionHandler("Exception canceling reservation.Thrown by cancelReservation()", e);
 			String message = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);
 			outputData = interpreter.encodeObjToJson(ProtocolMessage.ERROR,message);	
 		}

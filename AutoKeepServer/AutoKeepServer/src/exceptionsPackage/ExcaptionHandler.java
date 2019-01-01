@@ -56,7 +56,7 @@ public class ExcaptionHandler{
 		}
 	}
 	
-	public void writeLogToLocalMachine(Exception exception) {
+	private void writeLogToLocalMachine(Exception exception) {
 		String userDirectory = System.getProperty("user.dir");
 		new File(userDirectory+"/Logs").mkdirs();
 		String fileDirectory = userDirectory + "\\Logs\\Error_"+System.currentTimeMillis()+".log";

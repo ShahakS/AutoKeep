@@ -78,7 +78,7 @@ public class ReservationDAL {
 		return reservations;
 	}
 
-	public Queue<ReservationModel> getLast30DaysReservations() throws SQLException {
+	public Queue<ReservationModel> getLastMonthReservations() throws SQLException {
 		String query = "SELECT * FROM fn_GetLastMonthOrders()";
 		Queue<Object> parameters = new LinkedList<>();
 		Queue<ReservationModel> reservations = new LinkedList<>();
@@ -114,5 +114,18 @@ public class ReservationDAL {
 		isUpdated = DBconnector.callRoutineReturnedBooleanScalarValue(query, parameters);
 		
 		return isUpdated;
+	}
+
+	public boolean cancelReservation(int reservationID,int cancelationReason) throws SQLException {
+		String query = "{?= call sp_CancelReservationsByID(?,?)}";
+		Queue<Object> parameters = new LinkedList<>();
+		boolean isCanceled;
+
+		parameters.add(reservationID);
+		parameters.add(cancelationReason);
+
+		isCanceled = DBconnector.callRoutineReturnedBooleanScalarValue(query, parameters);
+		
+		return isCanceled;
 	}
 }

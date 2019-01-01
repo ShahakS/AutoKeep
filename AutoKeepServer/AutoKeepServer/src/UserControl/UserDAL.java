@@ -8,7 +8,7 @@ import java.util.Queue;
 import Database.DatabaseConnector;
 
 public class UserDAL {
-	DatabaseConnector DBconnector = DatabaseConnector.getDbConnectorInstance();
+	private DatabaseConnector DBconnector = DatabaseConnector.getDbConnectorInstance();
 	
 	/**
 	 * 
@@ -32,20 +32,6 @@ public class UserDAL {
 			Queue<Object> parameters = new LinkedList<>();
 
 			parameters.add(user.getEmailAddress());
-			DBconnector.executeSqlStatement(query, parameters);
-		}
-		
-		public void addUser(UserModel user) throws SQLException {
-			String query = "{call sp_InsertNewUser(?,?,?,?,?,?,?,?)}";
-			Queue<Object> parameters = new LinkedList<>();
-
-			parameters.add(user.getPassword());
-			parameters.add(user.getFirstName());
-			parameters.add(user.getLastName());
-			parameters.add(user.getPhoneNumber());
-			parameters.add(user.getEmailAddress());
-			parameters.add(user.getDateOfBirth());
-			parameters.add(user.IsAdministrator());
 			DBconnector.executeSqlStatement(query, parameters);
 		}
 

@@ -19,7 +19,7 @@ public class SessionManager {
 	private static SessionManager sessionManager = new SessionManager();
 	private ArrayList<SessionModel> sessions;
 	private Map<String,String> blockedIps;
-	public static final long BAN_DURATION = 60; 
+	public static final int BAN_DURATION = 60; 
 	
 	private SessionManager() {
 		sessions = new ArrayList<>();

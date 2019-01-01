@@ -35,10 +35,12 @@ public class ClientHandler implements Runnable{
 	
 	public void run() {		
 		boolean isConnected = true;
-		boolean isAuthenticated = connect();
+		boolean isAuthenticated;		
 		
-		if (isAuthenticated) {
-			try {
+		try {
+			isAuthenticated = connect();
+			
+			if (isAuthenticated) {
 				if(userBLL.user.IsAdministrator()) {
 					while(isConnected) {
 						String incomingData = (String) readClientData();
@@ -54,21 +56,23 @@ public class ClientHandler implements Runnable{
 						sendObjToClient(OutgoingData);						
 					}
 				}
-			}catch (IOException e) {
-				isConnected = false;
-			}catch (ClassNotFoundException e) {
-				new ExcaptionHandler("Exception Thrown by ClientHandler while casting",e);
-				String errorMsg = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);
-				String errorJsonString = interpreter.encodeObjToJson(ProtocolMessage.ERROR,errorMsg);
-				sendObjToClient(errorJsonString);	
 			}
+		}catch (IOException e) {
+			//Connection closed by the client
+			isConnected = false;
+		}catch (ClassNotFoundException e) {
+			new ExcaptionHandler("Exception Thrown by ClientHandler run()",e);
+			String errorMsg = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);
+			String errorJsonString = interpreter.encodeObjToJson(ProtocolMessage.ERROR,errorMsg);
+			sendObjToClient(errorJsonString);	
 		}
+		
 		userBLL.disconnect(clientSocket);
 		System.out.println("Disconnected");
 	}
 
-	public String adminBusinessLogicFlow(String incomingData) {
-		String outgoingData = null;
+	private String adminBusinessLogicFlow(String incomingData) {
+		String outgoingData;
 			
 		switch(interpreter.getProtocolMsg(incomingData)) {
 			case USERS_LIST:
@@ -115,6 +119,10 @@ public class ClientHandler implements Runnable{
 				outgoingData = reservationBLL.updateExistingReservation(incomingData);//TODO
 				break;
 				
+			case CANCEL_RESERVATION:
+				outgoingData = reservationBLL.cancelReservation(incomingData);//TODO
+				break;
+				
 			default:
 				outgoingData = userBusinessLogicFlow(incomingData);
 				break;
@@ -122,7 +130,7 @@ public class ClientHandler implements Runnable{
 		return outgoingData;
 	}	
 	
-	public String userBusinessLogicFlow(String incomingData) {
+	private String userBusinessLogicFlow(String incomingData) {
 		String outgoingData = null;
 			
 		switch(interpreter.getProtocolMsg(incomingData)) {
@@ -148,37 +156,27 @@ public class ClientHandler implements Runnable{
 	/**
 	 * Connect the user to the application with the given credentials
 	 * @return true if credential is passed else returns false
+	 * @throws ClassNotFoundException 
+	 * @throws IOException 
 	 */
-	private boolean connect() {
+	private boolean connect() throws ClassNotFoundException, IOException {
 		boolean isAuthenticated = false;
 		String isBanned = userBLL.isBanned(clientSocket);
 		
 		if(isBanned != null) //null = user isn't banned
 			sendObjToClient(isBanned);
 		else {
-			for(int numOfRetries = connectionRetries;!isAuthenticated && numOfRetries > 0;numOfRetries--) {
-				try {
-					String clientCredential = readClientData();
-					String outputData = userBLL.authenticate(clientCredential, clientSocket);
-					sendObjToClient(outputData);
-					
-					ProtocolMessage protocolMessage = interpreter.getProtocolMsg(outputData);
-					
-					if (protocolMessage == ProtocolMessage.OK) {
-						isAuthenticated = true;
-					}					
-					else if(protocolMessage == ProtocolMessage.USER_ALREADY_CONNECTED)
-						return false;
-					
-				} catch (ClassNotFoundException e) {
-					new ExcaptionHandler("Exception connecting to server. Thrown by connect()", e);
-					String errorMsg = ProtocolMessage.getMessage(ProtocolMessage.INTERNAL_ERROR);
-					String errorJsonString = interpreter.encodeObjToJson(ProtocolMessage.ERROR,errorMsg);
-					sendObjToClient(errorJsonString);				
-				} catch (IOException e) {
-					//Connection closed by the client
-					return false;
-				}
+			for(int numOfRetries = connectionRetries;!isAuthenticated && numOfRetries > 0;numOfRetries--) {				
+				String clientCredential = readClientData();
+				String outputData = userBLL.authenticate(clientCredential, clientSocket);
+				sendObjToClient(outputData);
+				
+				ProtocolMessage protocolMessage = interpreter.getProtocolMsg(outputData);
+				
+				if (protocolMessage == ProtocolMessage.OK)
+					isAuthenticated = true;				
+				else if(protocolMessage == ProtocolMessage.USER_ALREADY_CONNECTED)
+					return false;					
 			}
 		}
 		return isAuthenticated;

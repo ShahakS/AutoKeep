@@ -86,6 +86,12 @@ public class CommunicationInterpreter {
 				jsonObj.add("vehicles", gson.toJsonTree(obj,listType));
 				return jsonObj.toString();
 				
+			case USER_IS_BANNED:
+			case TOO_MANY_AUTHENTICATION_RETRIES:
+				listType = new TypeToken<Queue<Object>>(){}.getType();
+				jsonObj.add("banMessage", gson.toJsonTree(obj,listType));
+				return jsonObj.toString();
+				
 			default:
 				jsonObj.add("message", gson.toJsonTree((String)obj,String.class));				
 				return jsonObj.toString();
@@ -133,6 +139,12 @@ public class CommunicationInterpreter {
 				listType = new TypeToken<Queue<VehicleModel>>(){}.getType();  	
 				Queue<VehicleModel> vechiles = gson.fromJson(jsonObj.get("vehicles").toString(),listType);
 				return vechiles;
+				
+			case USER_IS_BANNED:
+			case TOO_MANY_AUTHENTICATION_RETRIES:
+				listType = new TypeToken<Queue<Object>>(){}.getType();  	
+				Queue<Object> banMessage = gson.fromJson(jsonObj.get("banMessage").toString(),listType);
+				return banMessage;
 				
 			default:
 				listType = new TypeToken<String>(){}.getType();  	

@@ -82,10 +82,6 @@ public class VehicleModel {
 		return isUsable;
 	}
 
-	public void setUsable(boolean isUsable) {
-		this.isUsable = isUsable;
-	}
-
 	public int getKilometers() {
 		return kilometers;
 	}

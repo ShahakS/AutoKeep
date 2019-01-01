@@ -1,7 +1,7 @@
 package SessionControl;
 
 public class SessionModel {
-	int sessionID;
+	private int sessionID;
 	private String connectedUser;
 	private String connectionTime;
 	private String disconnectionTime;
